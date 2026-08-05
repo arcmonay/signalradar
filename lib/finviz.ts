@@ -32,6 +32,7 @@ export type FinvizBundle = {
   asOf: string;
   ok: boolean;
   error?: string;
+  transport?: "direct" | "proxy" | "mixed";
   unusualVolume: FinvizScreenerRow[];
   gainers: FinvizScreenerRow[];
   losers: FinvizScreenerRow[];
@@ -60,13 +61,7 @@ function parseNumber(raw: string | undefined): number | null {
   const cleaned = raw.replace(/[,%$]/g, "").trim();
   if (!cleaned) return null;
   const mult =
-    cleaned.endsWith("B") || cleaned.endsWith("b")
-      ? 1e9
-      : cleaned.endsWith("M") || cleaned.endsWith("m")
-        ? 1e6
-        : cleaned.endsWith("K") || cleaned.endsWith("k")
-          ? 1e3
-          : 1;
+    /[Bb]$/.test(cleaned) ? 1e9 : /[Mm]$/.test(cleaned) ? 1e6 : /[Kk]$/.test(cleaned) ? 1e3 : 1;
   const n = Number.parseFloat(cleaned.replace(/[BMKbmK]/g, ""));
   return Number.isFinite(n) ? n * mult : null;
 }
@@ -77,19 +72,72 @@ function parsePct(raw: string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-async function fetchHtml(url: string): Promise<string> {
+async function warmCookies(): Promise<string> {
+  try {
+    const home = await fetch("https://finviz.com/", {
+      headers: {
+        "User-Agent": UA,
+        Accept: "text/html",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      signal: AbortSignal.timeout(10000),
+      cache: "no-store",
+    });
+    const setCookie =
+      typeof home.headers.getSetCookie === "function"
+        ? home.headers.getSetCookie()
+        : [];
+    return setCookie.map((c) => c.split(";")[0]).join("; ");
+  } catch {
+    return "";
+  }
+}
+
+async function fetchDirect(url: string, cookie: string): Promise<string> {
   const res = await fetch(url, {
     headers: {
       "User-Agent": UA,
       Accept: "text/html,application/xhtml+xml",
       "Accept-Language": "en-US,en;q=0.9",
       Referer: "https://finviz.com/",
+      ...(cookie ? { Cookie: cookie } : {}),
     },
-    next: { revalidate: 60 },
     signal: AbortSignal.timeout(15000),
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error(`Finviz ${res.status} for ${url}`);
+  if (!res.ok) throw new Error(`Finviz ${res.status}`);
   return res.text();
+}
+
+async function fetchViaProxy(url: string): Promise<string> {
+  const proxyUrl = `https://r.jina.ai/${url}`;
+  const res = await fetch(proxyUrl, {
+    headers: {
+      Accept: "text/html",
+      "X-Return-Format": "html",
+      "User-Agent": UA,
+    },
+    signal: AbortSignal.timeout(25000),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Finviz proxy ${res.status}`);
+  return res.text();
+}
+
+async function fetchFinvizHtml(
+  url: string,
+  cookie: string,
+): Promise<{ html: string; transport: "direct" | "proxy" }> {
+  try {
+    const html = await fetchDirect(url, cookie);
+    if (html.includes("tab-link") || html.includes("nn-tab-link") || html.includes("<tr")) {
+      return { html, transport: "direct" };
+    }
+    throw new Error("Finviz direct returned unexpected HTML");
+  } catch {
+    const html = await fetchViaProxy(url);
+    return { html, transport: "proxy" };
+  }
 }
 
 export function parseScreener(html: string): FinvizScreenerRow[] {
@@ -142,7 +190,6 @@ export function parseSectorOverview(html: string): FinvizSectorRow[] {
       strip(x[1]),
     );
     if (tds.length < 12) continue;
-    // Overview: No. Name Stocks Market Cap Dividend P/E Fwd P/E PEG ... Change Volume
     const no = tds[0];
     const name = tds[1];
     if (!/^\d+$/.test(no) || !name || name.length < 3) continue;
@@ -168,7 +215,6 @@ export function parseSectorPerformance(html: string): FinvizSectorRow[] {
     const tds = [...tr[0].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((x) =>
       strip(x[1]),
     );
-    // Perf view roughly: No Name PerfWeek PerfMonth PerfQuart PerfHalf PerfYear PerfYTD AvgVol RelVol Change Volume
     if (tds.length < 10 || !/^\d+$/.test(tds[0])) continue;
     const name = tds[1];
     if (!name || name.length < 3) continue;
@@ -186,8 +232,60 @@ export function parseSectorPerformance(html: string): FinvizSectorRow[] {
   return rows;
 }
 
+type ScreenKey =
+  | "unusualVolume"
+  | "gainers"
+  | "losers"
+  | "mostActive"
+  | "earningsThisWeek"
+  | "sectorsOverview"
+  | "sectorsPerf"
+  | "news";
+
+const SCREENS: Record<ScreenKey, string> = {
+  unusualVolume: "https://finviz.com/screener.ashx?v=111&s=ta_unusualvolume",
+  gainers: "https://finviz.com/screener.ashx?v=111&s=ta_topgainers",
+  losers: "https://finviz.com/screener.ashx?v=111&s=ta_toplosers",
+  mostActive: "https://finviz.com/screener.ashx?v=111&s=ta_mostactive",
+  earningsThisWeek:
+    "https://finviz.com/screener.ashx?v=111&f=earningsdate_thisweek",
+  sectorsOverview: "https://finviz.com/groups.ashx?g=sector&v=111&o=-change",
+  sectorsPerf: "https://finviz.com/groups.ashx?g=sector&v=140&o=-perf1d",
+  news: "https://finviz.com/news.ashx",
+};
+
 export async function getFinvizBundle(): Promise<FinvizBundle> {
+  const empty: FinvizBundle = {
+    asOf: new Date().toISOString(),
+    ok: false,
+    unusualVolume: [],
+    gainers: [],
+    losers: [],
+    mostActive: [],
+    earningsThisWeek: [],
+    sectors: [],
+    news: [],
+  };
+
   try {
+    const cookie = await warmCookies();
+    const transports = new Set<"direct" | "proxy">();
+    const errors: string[] = [];
+
+    async function load(key: ScreenKey) {
+      try {
+        const { html, transport } = await fetchFinvizHtml(SCREENS[key], cookie);
+        transports.add(transport);
+        return html;
+      } catch (e) {
+        errors.push(
+          `${key}: ${e instanceof Error ? e.message : "fetch failed"}`,
+        );
+        return "";
+      }
+    }
+
+    // Keep concurrency modest to reduce blocks; still parallel enough for UX.
     const [
       unusualHtml,
       gainersHtml,
@@ -198,60 +296,74 @@ export async function getFinvizBundle(): Promise<FinvizBundle> {
       perfHtml,
       newsHtml,
     ] = await Promise.all([
-      fetchHtml("https://finviz.com/screener.ashx?v=111&s=ta_unusualvolume"),
-      fetchHtml("https://finviz.com/screener.ashx?v=111&s=ta_topgainers"),
-      fetchHtml("https://finviz.com/screener.ashx?v=111&s=ta_toplosers"),
-      fetchHtml("https://finviz.com/screener.ashx?v=111&s=ta_mostactive"),
-      fetchHtml(
-        "https://finviz.com/screener.ashx?v=111&f=earningsdate_thisweek",
-      ),
-      fetchHtml("https://finviz.com/groups.ashx?g=sector&v=111&o=-change"),
-      fetchHtml("https://finviz.com/groups.ashx?g=sector&v=140&o=-perf1d"),
-      fetchHtml("https://finviz.com/news.ashx"),
+      load("unusualVolume"),
+      load("gainers"),
+      load("losers"),
+      load("mostActive"),
+      load("earningsThisWeek"),
+      load("sectorsOverview"),
+      load("sectorsPerf"),
+      load("news"),
     ]);
 
-    const overviewSectors = parseSectorOverview(sectorsHtml);
-    const perfSectors = parseSectorPerformance(perfHtml);
+    const overviewSectors = sectorsHtml ? parseSectorOverview(sectorsHtml) : [];
+    const perfSectors = perfHtml ? parseSectorPerformance(perfHtml) : [];
     const perfByName = new Map(perfSectors.map((s) => [s.name, s]));
+    const sectors = (overviewSectors.length ? overviewSectors : perfSectors)
+      .map((s) => {
+        const p = perfByName.get(s.name);
+        return {
+          ...s,
+          perfWeek: p?.perfWeek ?? s.perfWeek,
+          perfMonth: p?.perfMonth ?? s.perfMonth,
+          relativeVolume: p?.relativeVolume ?? s.relativeVolume,
+          changePct: s.changePct ?? p?.changePct ?? null,
+        };
+      })
+      .sort((a, b) => (b.changePct ?? -999) - (a.changePct ?? -999));
 
-    const sectors = (
-      overviewSectors.length ? overviewSectors : perfSectors
-    ).map((s) => {
-      const p = perfByName.get(s.name);
-      return {
-        ...s,
-        perfWeek: p?.perfWeek ?? s.perfWeek,
-        perfMonth: p?.perfMonth ?? s.perfMonth,
-        relativeVolume: p?.relativeVolume ?? s.relativeVolume,
-        changePct: s.changePct ?? p?.changePct ?? null,
-      };
-    });
-
-    return {
-      asOf: new Date().toISOString(),
-      ok: true,
-      unusualVolume: parseScreener(unusualHtml),
-      gainers: parseScreener(gainersHtml),
-      losers: parseScreener(losersHtml),
-      mostActive: parseScreener(activeHtml),
-      earningsThisWeek: parseScreener(earningsHtml),
-      sectors: sectors.sort(
-        (a, b) => (b.changePct ?? -999) - (a.changePct ?? -999),
-      ),
-      news: parseNews(newsHtml),
-    };
-  } catch (e) {
-    return {
+    const bundle: FinvizBundle = {
       asOf: new Date().toISOString(),
       ok: false,
+      transport:
+        transports.size === 0
+          ? undefined
+          : transports.size === 2
+            ? "mixed"
+            : transports.has("direct")
+              ? "direct"
+              : "proxy",
+      unusualVolume: unusualHtml ? parseScreener(unusualHtml) : [],
+      gainers: gainersHtml ? parseScreener(gainersHtml) : [],
+      losers: losersHtml ? parseScreener(losersHtml) : [],
+      mostActive: activeHtml ? parseScreener(activeHtml) : [],
+      earningsThisWeek: earningsHtml ? parseScreener(earningsHtml) : [],
+      sectors,
+      news: newsHtml ? parseNews(newsHtml) : [],
+    };
+
+    const hasData =
+      bundle.unusualVolume.length +
+        bundle.gainers.length +
+        bundle.losers.length +
+        bundle.mostActive.length +
+        bundle.earningsThisWeek.length +
+        bundle.sectors.length +
+        bundle.news.length >
+      0;
+
+    bundle.ok = hasData;
+    if (!hasData) {
+      bundle.error = errors[0] ?? "Finviz returned no parseable rows";
+    } else if (errors.length) {
+      bundle.error = `Partial Finviz load (${errors.length} screen(s) failed)`;
+    }
+
+    return bundle;
+  } catch (e) {
+    return {
+      ...empty,
       error: e instanceof Error ? e.message : "Finviz fetch failed",
-      unusualVolume: [],
-      gainers: [],
-      losers: [],
-      mostActive: [],
-      earningsThisWeek: [],
-      sectors: [],
-      news: [],
     };
   }
 }

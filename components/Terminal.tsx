@@ -83,6 +83,7 @@ type Snapshot = {
   finviz?: {
     ok: boolean;
     error?: string;
+    transport?: "direct" | "proxy" | "mixed";
     unusualVolume: FinvizRow[];
     gainers: FinvizRow[];
     losers: FinvizRow[];
@@ -475,7 +476,7 @@ export default function Terminal() {
               <p>
                 Free Finviz HTML screens ·{" "}
                 {data?.finviz?.ok
-                  ? "connected"
+                  ? `connected (${data.finviz.transport ?? "direct"})`
                   : data?.finviz?.error ?? "loading"}
               </p>
             </div>
