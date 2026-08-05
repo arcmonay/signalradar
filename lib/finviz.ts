@@ -124,19 +124,42 @@ async function fetchViaProxy(url: string): Promise<string> {
   return res.text();
 }
 
+function looksUseful(html: string, kind: "screener" | "news" | "groups"): boolean {
+  if (!html || html.length < 500) return false;
+  if (kind === "screener") return /tab-link[^>]*>[A-Z]/.test(html);
+  if (kind === "news") return html.includes("nn-tab-link");
+  return /<tr[\s\S]*?<td/.test(html);
+}
+
 async function fetchFinvizHtml(
   url: string,
   cookie: string,
+  kind: "screener" | "news" | "groups" = "screener",
 ): Promise<{ html: string; transport: "direct" | "proxy" }> {
+  // Screener pages are frequently blocked from datacenter IPs; prefer proxy there.
+  const preferProxy = kind === "screener";
+
+  if (preferProxy) {
+    try {
+      const html = await fetchViaProxy(url);
+      if (looksUseful(html, kind)) return { html, transport: "proxy" };
+    } catch {
+      // fall through to direct
+    }
+  }
+
   try {
     const html = await fetchDirect(url, cookie);
-    if (html.includes("tab-link") || html.includes("nn-tab-link") || html.includes("<tr")) {
-      return { html, transport: "direct" };
-    }
+    if (looksUseful(html, kind)) return { html, transport: "direct" };
     throw new Error("Finviz direct returned unexpected HTML");
-  } catch {
-    const html = await fetchViaProxy(url);
-    return { html, transport: "proxy" };
+  } catch (directErr) {
+    if (!preferProxy) {
+      const html = await fetchViaProxy(url);
+      if (looksUseful(html, kind)) return { html, transport: "proxy" };
+    }
+    throw directErr instanceof Error
+      ? directErr
+      : new Error("Finviz fetch failed");
   }
 }
 
@@ -272,9 +295,16 @@ export async function getFinvizBundle(): Promise<FinvizBundle> {
     const transports = new Set<"direct" | "proxy">();
     const errors: string[] = [];
 
-    async function load(key: ScreenKey) {
+    async function load(
+      key: ScreenKey,
+      kind: "screener" | "news" | "groups",
+    ) {
       try {
-        const { html, transport } = await fetchFinvizHtml(SCREENS[key], cookie);
+        const { html, transport } = await fetchFinvizHtml(
+          SCREENS[key],
+          cookie,
+          kind,
+        );
         transports.add(transport);
         return html;
       } catch (e) {
@@ -285,25 +315,22 @@ export async function getFinvizBundle(): Promise<FinvizBundle> {
       }
     }
 
-    // Keep concurrency modest to reduce blocks; still parallel enough for UX.
-    const [
-      unusualHtml,
-      gainersHtml,
-      losersHtml,
-      activeHtml,
-      earningsHtml,
-      sectorsHtml,
-      perfHtml,
-      newsHtml,
-    ] = await Promise.all([
-      load("unusualVolume"),
-      load("gainers"),
-      load("losers"),
-      load("mostActive"),
-      load("earningsThisWeek"),
-      load("sectorsOverview"),
-      load("sectorsPerf"),
-      load("news"),
+    // Groups/news in parallel (usually allowed). Screeners staggered via proxy.
+    const [sectorsHtml, perfHtml, newsHtml] = await Promise.all([
+      load("sectorsOverview", "groups"),
+      load("sectorsPerf", "groups"),
+      load("news", "news"),
+    ]);
+
+    // Batch screeners to avoid proxy rate limits without blowing the function budget.
+    const [unusualHtml, gainersHtml, losersHtml] = await Promise.all([
+      load("unusualVolume", "screener"),
+      load("gainers", "screener"),
+      load("losers", "screener"),
+    ]);
+    const [activeHtml, earningsHtml] = await Promise.all([
+      load("mostActive", "screener"),
+      load("earningsThisWeek", "screener"),
     ]);
 
     const overviewSectors = sectorsHtml ? parseSectorOverview(sectorsHtml) : [];
