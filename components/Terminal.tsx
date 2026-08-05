@@ -83,7 +83,7 @@ type Snapshot = {
   finviz?: {
     ok: boolean;
     error?: string;
-    transport?: "direct" | "proxy" | "mixed";
+    transport?: "direct" | "cache" | "mixed";
     unusualVolume: FinvizRow[];
     gainers: FinvizRow[];
     losers: FinvizRow[];

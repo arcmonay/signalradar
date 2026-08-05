@@ -32,7 +32,7 @@ export type FinvizBundle = {
   asOf: string;
   ok: boolean;
   error?: string;
-  transport?: "direct" | "proxy" | "mixed";
+  transport?: "direct" | "cache" | "mixed";
   unusualVolume: FinvizScreenerRow[];
   gainers: FinvizScreenerRow[];
   losers: FinvizScreenerRow[];
@@ -60,8 +60,13 @@ function parseNumber(raw: string | undefined): number | null {
   if (!raw || raw === "-") return null;
   const cleaned = raw.replace(/[,%$]/g, "").trim();
   if (!cleaned) return null;
-  const mult =
-    /[Bb]$/.test(cleaned) ? 1e9 : /[Mm]$/.test(cleaned) ? 1e6 : /[Kk]$/.test(cleaned) ? 1e3 : 1;
+  const mult = /[Bb]$/.test(cleaned)
+    ? 1e9
+    : /[Mm]$/.test(cleaned)
+      ? 1e6
+      : /[Kk]$/.test(cleaned)
+        ? 1e3
+        : 1;
   const n = Number.parseFloat(cleaned.replace(/[BMKbmK]/g, ""));
   return Number.isFinite(n) ? n * mult : null;
 }
@@ -72,95 +77,30 @@ function parsePct(raw: string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-async function warmCookies(): Promise<string> {
-  try {
-    const home = await fetch("https://finviz.com/", {
-      headers: {
-        "User-Agent": UA,
-        Accept: "text/html",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-      signal: AbortSignal.timeout(10000),
-      cache: "no-store",
-    });
-    const setCookie =
-      typeof home.headers.getSetCookie === "function"
-        ? home.headers.getSetCookie()
-        : [];
-    return setCookie.map((c) => c.split(";")[0]).join("; ");
-  } catch {
-    return "";
-  }
+function isCloudflareChallenge(html: string): boolean {
+  return (
+    html.includes("Just a moment") ||
+    html.includes("cf-browser-verification") ||
+    html.includes("cf-challenge")
+  );
 }
 
-async function fetchDirect(url: string, cookie: string): Promise<string> {
+async function fetchHtml(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: {
       "User-Agent": UA,
       Accept: "text/html,application/xhtml+xml",
       "Accept-Language": "en-US,en;q=0.9",
       Referer: "https://finviz.com/",
-      ...(cookie ? { Cookie: cookie } : {}),
     },
     signal: AbortSignal.timeout(15000),
     cache: "no-store",
   });
-  if (!res.ok) throw new Error(`Finviz ${res.status}`);
-  return res.text();
-}
-
-async function fetchViaProxy(url: string): Promise<string> {
-  const proxyUrl = `https://r.jina.ai/${url}`;
-  const res = await fetch(proxyUrl, {
-    headers: {
-      Accept: "text/html",
-      "X-Return-Format": "html",
-      "User-Agent": UA,
-    },
-    signal: AbortSignal.timeout(25000),
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error(`Finviz proxy ${res.status}`);
-  return res.text();
-}
-
-function looksUseful(html: string, kind: "screener" | "news" | "groups"): boolean {
-  if (!html || html.length < 500) return false;
-  if (kind === "screener") return /tab-link[^>]*>[A-Z]/.test(html);
-  if (kind === "news") return html.includes("nn-tab-link");
-  return /<tr[\s\S]*?<td/.test(html);
-}
-
-async function fetchFinvizHtml(
-  url: string,
-  cookie: string,
-  kind: "screener" | "news" | "groups" = "screener",
-): Promise<{ html: string; transport: "direct" | "proxy" }> {
-  // Screener pages are frequently blocked from datacenter IPs; prefer proxy there.
-  const preferProxy = kind === "screener";
-
-  if (preferProxy) {
-    try {
-      const html = await fetchViaProxy(url);
-      if (looksUseful(html, kind)) return { html, transport: "proxy" };
-    } catch {
-      // fall through to direct
-    }
+  const html = await res.text();
+  if (!res.ok || isCloudflareChallenge(html)) {
+    throw new Error(`Finviz blocked/failed (${res.status})`);
   }
-
-  try {
-    const html = await fetchDirect(url, cookie);
-    if (looksUseful(html, kind)) return { html, transport: "direct" };
-    throw new Error("Finviz direct returned unexpected HTML");
-  } catch (directErr) {
-    if (!preferProxy) {
-      const html = await fetchViaProxy(url);
-      if (looksUseful(html, kind)) return { html, transport: "proxy" };
-    }
-    throw directErr instanceof Error
-      ? directErr
-      : new Error("Finviz fetch failed");
-  }
+  return html;
 }
 
 export function parseScreener(html: string): FinvizScreenerRow[] {
@@ -255,142 +195,174 @@ export function parseSectorPerformance(html: string): FinvizSectorRow[] {
   return rows;
 }
 
-type ScreenKey =
-  | "unusualVolume"
-  | "gainers"
-  | "losers"
-  | "mostActive"
-  | "earningsThisWeek"
-  | "sectorsOverview"
-  | "sectorsPerf"
-  | "news";
-
-const SCREENS: Record<ScreenKey, string> = {
-  unusualVolume: "https://finviz.com/screener.ashx?v=111&s=ta_unusualvolume",
-  gainers: "https://finviz.com/screener.ashx?v=111&s=ta_topgainers",
-  losers: "https://finviz.com/screener.ashx?v=111&s=ta_toplosers",
-  mostActive: "https://finviz.com/screener.ashx?v=111&s=ta_mostactive",
-  earningsThisWeek:
-    "https://finviz.com/screener.ashx?v=111&f=earningsdate_thisweek",
-  sectorsOverview: "https://finviz.com/groups.ashx?g=sector&v=111&o=-change",
-  sectorsPerf: "https://finviz.com/groups.ashx?g=sector&v=140&o=-perf1d",
-  news: "https://finviz.com/news.ashx",
+type CacheFile = {
+  asOf: string;
+  unusualVolume: FinvizScreenerRow[];
+  gainers: FinvizScreenerRow[];
+  losers: FinvizScreenerRow[];
+  mostActive: FinvizScreenerRow[];
+  earningsThisWeek: FinvizScreenerRow[];
 };
 
+async function loadCache(): Promise<CacheFile | null> {
+  try {
+    const base =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+    const url = base
+      ? `${base}/data/finviz-cache.json`
+      : "http://127.0.0.1:3000/data/finviz-cache.json";
+
+    // Prefer filesystem in the same deployment when available.
+    try {
+      const { readFile } = await import("node:fs/promises");
+      const { join } = await import("node:path");
+      const raw = await readFile(
+        join(process.cwd(), "public", "data", "finviz-cache.json"),
+        "utf8",
+      );
+      return JSON.parse(raw) as CacheFile;
+    } catch {
+      const res = await fetch(url, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) return null;
+      return (await res.json()) as CacheFile;
+    }
+  } catch {
+    return null;
+  }
+}
+
+async function safeParseScreener(url: string): Promise<FinvizScreenerRow[]> {
+  const html = await fetchHtml(url);
+  return parseScreener(html);
+}
+
 export async function getFinvizBundle(): Promise<FinvizBundle> {
-  const empty: FinvizBundle = {
-    asOf: new Date().toISOString(),
-    ok: false,
-    unusualVolume: [],
-    gainers: [],
-    losers: [],
-    mostActive: [],
-    earningsThisWeek: [],
-    sectors: [],
-    news: [],
-  };
+  const errors: string[] = [];
+  let transport: "direct" | "cache" | "mixed" = "direct";
+
+  const [sectorsHtml, perfHtml, newsHtml] = await Promise.all([
+    fetchHtml("https://finviz.com/groups.ashx?g=sector&v=111&o=-change").catch(
+      (e) => {
+        errors.push(`sectors: ${e instanceof Error ? e.message : "fail"}`);
+        return "";
+      },
+    ),
+    fetchHtml("https://finviz.com/groups.ashx?g=sector&v=140&o=-perf1d").catch(
+      (e) => {
+        errors.push(`sectorsPerf: ${e instanceof Error ? e.message : "fail"}`);
+        return "";
+      },
+    ),
+    fetchHtml("https://finviz.com/news.ashx").catch((e) => {
+      errors.push(`news: ${e instanceof Error ? e.message : "fail"}`);
+      return "";
+    }),
+  ]);
+
+  const overviewSectors = sectorsHtml ? parseSectorOverview(sectorsHtml) : [];
+  const perfSectors = perfHtml ? parseSectorPerformance(perfHtml) : [];
+  const perfByName = new Map(perfSectors.map((s) => [s.name, s]));
+  const sectors = (overviewSectors.length ? overviewSectors : perfSectors)
+    .map((s) => {
+      const p = perfByName.get(s.name);
+      return {
+        ...s,
+        perfWeek: p?.perfWeek ?? s.perfWeek,
+        perfMonth: p?.perfMonth ?? s.perfMonth,
+        relativeVolume: p?.relativeVolume ?? s.relativeVolume,
+        changePct: s.changePct ?? p?.changePct ?? null,
+      };
+    })
+    .sort((a, b) => (b.changePct ?? -999) - (a.changePct ?? -999));
+
+  const news = newsHtml ? parseNews(newsHtml) : [];
+
+  const screenUrls = {
+    unusualVolume: "https://finviz.com/screener.ashx?v=111&s=ta_unusualvolume",
+    gainers: "https://finviz.com/screener.ashx?v=111&s=ta_topgainers",
+    losers: "https://finviz.com/screener.ashx?v=111&s=ta_toplosers",
+    mostActive: "https://finviz.com/screener.ashx?v=111&s=ta_mostactive",
+    earningsThisWeek:
+      "https://finviz.com/screener.ashx?v=111&f=earningsdate_thisweek",
+  } as const;
+
+  let unusualVolume: FinvizScreenerRow[] = [];
+  let gainers: FinvizScreenerRow[] = [];
+  let losers: FinvizScreenerRow[] = [];
+  let mostActive: FinvizScreenerRow[] = [];
+  let earningsThisWeek: FinvizScreenerRow[] = [];
+  let usedCache = false;
 
   try {
-    const cookie = await warmCookies();
-    const transports = new Set<"direct" | "proxy">();
-    const errors: string[] = [];
-
-    async function load(
-      key: ScreenKey,
-      kind: "screener" | "news" | "groups",
-    ) {
-      try {
-        const { html, transport } = await fetchFinvizHtml(
-          SCREENS[key],
-          cookie,
-          kind,
-        );
-        transports.add(transport);
-        return html;
-      } catch (e) {
-        errors.push(
-          `${key}: ${e instanceof Error ? e.message : "fetch failed"}`,
-        );
-        return "";
-      }
-    }
-
-    // Groups/news in parallel (usually allowed). Screeners staggered via proxy.
-    const [sectorsHtml, perfHtml, newsHtml] = await Promise.all([
-      load("sectorsOverview", "groups"),
-      load("sectorsPerf", "groups"),
-      load("news", "news"),
-    ]);
-
-    // Batch screeners to avoid proxy rate limits without blowing the function budget.
-    const [unusualHtml, gainersHtml, losersHtml] = await Promise.all([
-      load("unusualVolume", "screener"),
-      load("gainers", "screener"),
-      load("losers", "screener"),
-    ]);
-    const [activeHtml, earningsHtml] = await Promise.all([
-      load("mostActive", "screener"),
-      load("earningsThisWeek", "screener"),
-    ]);
-
-    const overviewSectors = sectorsHtml ? parseSectorOverview(sectorsHtml) : [];
-    const perfSectors = perfHtml ? parseSectorPerformance(perfHtml) : [];
-    const perfByName = new Map(perfSectors.map((s) => [s.name, s]));
-    const sectors = (overviewSectors.length ? overviewSectors : perfSectors)
-      .map((s) => {
-        const p = perfByName.get(s.name);
-        return {
-          ...s,
-          perfWeek: p?.perfWeek ?? s.perfWeek,
-          perfMonth: p?.perfMonth ?? s.perfMonth,
-          relativeVolume: p?.relativeVolume ?? s.relativeVolume,
-          changePct: s.changePct ?? p?.changePct ?? null,
-        };
-      })
-      .sort((a, b) => (b.changePct ?? -999) - (a.changePct ?? -999));
-
-    const bundle: FinvizBundle = {
-      asOf: new Date().toISOString(),
-      ok: false,
-      transport:
-        transports.size === 0
-          ? undefined
-          : transports.size === 2
-            ? "mixed"
-            : transports.has("direct")
-              ? "direct"
-              : "proxy",
-      unusualVolume: unusualHtml ? parseScreener(unusualHtml) : [],
-      gainers: gainersHtml ? parseScreener(gainersHtml) : [],
-      losers: losersHtml ? parseScreener(losersHtml) : [],
-      mostActive: activeHtml ? parseScreener(activeHtml) : [],
-      earningsThisWeek: earningsHtml ? parseScreener(earningsHtml) : [],
-      sectors,
-      news: newsHtml ? parseNews(newsHtml) : [],
-    };
-
-    const hasData =
-      bundle.unusualVolume.length +
-        bundle.gainers.length +
-        bundle.losers.length +
-        bundle.mostActive.length +
-        bundle.earningsThisWeek.length +
-        bundle.sectors.length +
-        bundle.news.length >
-      0;
-
-    bundle.ok = hasData;
-    if (!hasData) {
-      bundle.error = errors[0] ?? "Finviz returned no parseable rows";
-    } else if (errors.length) {
-      bundle.error = `Partial Finviz load (${errors.length} screen(s) failed)`;
-    }
-
-    return bundle;
+    const live = await Promise.all(
+      Object.values(screenUrls).map((url) => safeParseScreener(url)),
+    );
+    [unusualVolume, gainers, losers, mostActive, earningsThisWeek] = live;
   } catch (e) {
-    return {
-      ...empty,
-      error: e instanceof Error ? e.message : "Finviz fetch failed",
-    };
+    errors.push(
+      `screeners: ${e instanceof Error ? e.message : "blocked"} — using cache`,
+    );
+    const cache = await loadCache();
+    if (cache) {
+      usedCache = true;
+      unusualVolume = cache.unusualVolume ?? [];
+      gainers = cache.gainers ?? [];
+      losers = cache.losers ?? [];
+      mostActive = cache.mostActive ?? [];
+      earningsThisWeek = cache.earningsThisWeek ?? [];
+      transport = sectors.length || news.length ? "mixed" : "cache";
+    }
   }
+
+  // If live screeners returned empty arrays due to soft blocks, also use cache.
+  const liveEmpty =
+    unusualVolume.length +
+      gainers.length +
+      losers.length +
+      mostActive.length +
+      earningsThisWeek.length ===
+    0;
+  if (liveEmpty && !usedCache) {
+    const cache = await loadCache();
+    if (cache) {
+      usedCache = true;
+      unusualVolume = cache.unusualVolume ?? [];
+      gainers = cache.gainers ?? [];
+      losers = cache.losers ?? [];
+      mostActive = cache.mostActive ?? [];
+      earningsThisWeek = cache.earningsThisWeek ?? [];
+      transport = sectors.length || news.length ? "mixed" : "cache";
+      errors.push("screeners empty live — served finviz-cache.json");
+    }
+  } else if (!usedCache) {
+    transport = "direct";
+  }
+
+  const hasData =
+    unusualVolume.length +
+      gainers.length +
+      losers.length +
+      mostActive.length +
+      earningsThisWeek.length +
+      sectors.length +
+      news.length >
+    0;
+
+  return {
+    asOf: new Date().toISOString(),
+    ok: hasData,
+    transport,
+    error: errors.length ? errors.join("; ") : undefined,
+    unusualVolume,
+    gainers,
+    losers,
+    mostActive,
+    earningsThisWeek,
+    sectors,
+    news,
+  };
 }

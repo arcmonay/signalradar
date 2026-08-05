@@ -19,7 +19,8 @@ This is a separate product from Undercutters.
 | Feed | Source | Cadence |
 |------|--------|---------|
 | Quotes / screeners / charts | Yahoo Finance via `yahoo-finance2` | Polled ~20s |
-| Unusual vol / gainers / losers / most active / EA week / sector groups / news | Finviz public HTML screens | Polled ~20s (HTML cached ~60s) |
+| Sector groups + news | Finviz public HTML (live) | Polled ~20s |
+| Unusual vol / gainers / losers / most active / EA week | Finviz public screens via CI cache (`public/data/finviz-cache.json`) | GitHub Action ~30m (Vercel IPs are Cloudflare-blocked) |
 | Political / OGE trades | [kadoa-org/congress-trading-monitor](https://github.com/kadoa-org/congress-trading-monitor) public JSON | Cached ~30m |
 
 **Limits:** free feeds can be delayed, rate-limited, or change without notice. Finviz has no official free API — we parse public pages. True tick-level orderflow, dark pool, and options flow require paid vendors.
