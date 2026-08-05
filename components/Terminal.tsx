@@ -47,6 +47,24 @@ type EarningsRow = {
   inWindow: boolean;
 };
 
+type FinvizRow = {
+  symbol: string;
+  company: string;
+  sector: string;
+  price: number | null;
+  changePct: number | null;
+  volume: number | null;
+  url: string;
+};
+
+type FinvizSector = {
+  name: string;
+  changePct: number | null;
+  perfWeek: number | null;
+  volume: string;
+  marketCap: string;
+};
+
 type Snapshot = {
   asOf: string;
   latencyMs: number;
@@ -61,6 +79,17 @@ type Snapshot = {
     recent: PoliticalTrade[];
     pelosi: PoliticalTrade[];
     trump: PoliticalTrade[];
+  };
+  finviz?: {
+    ok: boolean;
+    error?: string;
+    unusualVolume: FinvizRow[];
+    gainers: FinvizRow[];
+    losers: FinvizRow[];
+    mostActive: FinvizRow[];
+    earningsThisWeek: FinvizRow[];
+    sectors: FinvizSector[];
+    news: Array<{ title: string; url: string }>;
   };
   ideas: Idea[];
   flow: {
@@ -89,6 +118,9 @@ export default function Terminal() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pelosi" | "trump" | "recent">("pelosi");
+  const [fvTab, setFvTab] = useState<
+    "unusual" | "gainers" | "losers" | "active" | "earnings"
+  >("unusual");
 
   useEffect(() => {
     let alive = true;
@@ -127,6 +159,17 @@ export default function Terminal() {
         ? data?.political.trump ?? []
         : data?.political.recent ?? [];
 
+  const finvizRows =
+    fvTab === "unusual"
+      ? data?.finviz?.unusualVolume ?? []
+      : fvTab === "gainers"
+        ? data?.finviz?.gainers ?? []
+        : fvTab === "losers"
+          ? data?.finviz?.losers ?? []
+          : fvTab === "active"
+            ? data?.finviz?.mostActive ?? []
+            : data?.finviz?.earningsThisWeek ?? [];
+
   return (
     <div className="terminal">
       <header className="topbar">
@@ -144,7 +187,7 @@ export default function Terminal() {
             <span>
               {data
                 ? `${fmtTime(data.asOf)} · ${data.latencyMs}ms · refresh ${REFRESH_MS / 1000}s`
-                : "Yahoo + public political disclosures"}
+                : "Yahoo + Finviz + political disclosures"}
             </span>
           </div>
         </div>
@@ -404,7 +447,7 @@ export default function Terminal() {
         </section>
 
         <section className="panel">
-          <PanelHead title="Session gainers" sub="Yahoo day_gainers screener" />
+          <PanelHead title="Yahoo session gainers" sub="Yahoo day_gainers screener" />
           <table>
             <thead>
               <tr>
@@ -423,6 +466,119 @@ export default function Terminal() {
               ))}
             </tbody>
           </table>
+        </section>
+
+        <section className="panel span-2">
+          <div className="panel-head row">
+            <div>
+              <h2>Finviz screens</h2>
+              <p>
+                Free Finviz HTML screens ·{" "}
+                {data?.finviz?.ok
+                  ? "connected"
+                  : data?.finviz?.error ?? "loading"}
+              </p>
+            </div>
+            <div className="tabs">
+              {(
+                [
+                  ["unusual", "Unusual Vol"],
+                  ["gainers", "Gainers"],
+                  ["losers", "Losers"],
+                  ["active", "Most Active"],
+                  ["earnings", "EA Week"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={fvTab === id ? "active" : undefined}
+                  onClick={() => setFvTab(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Company</th>
+                <th>Sector</th>
+                <th>Price</th>
+                <th>Chg</th>
+                <th>Volume</th>
+              </tr>
+            </thead>
+            <tbody>
+              {finvizRows.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="muted">
+                    No Finviz rows yet (page may be rate-limiting).
+                  </td>
+                </tr>
+              ) : (
+                finvizRows.slice(0, 15).map((r) => (
+                  <tr key={`${fvTab}-${r.symbol}`}>
+                    <td>
+                      <a href={r.url} target="_blank" rel="noreferrer">
+                        {r.symbol}
+                      </a>
+                    </td>
+                    <td>{r.company}</td>
+                    <td>{r.sector}</td>
+                    <td>{fmtPrice(r.price)}</td>
+                    <td className={pctClass(r.changePct)}>{fmtPct(r.changePct)}</td>
+                    <td>{fmtNum(r.volume)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </section>
+
+        <section className="panel">
+          <PanelHead
+            title="Finviz sector groups"
+            sub="Sector overview ranked by session change"
+          />
+          <div className="sector-list">
+            {(data?.finviz?.sectors ?? []).map((s) => (
+              <div key={s.name} className="sector-row">
+                <div>
+                  <strong>{s.name}</strong>
+                  <span className="muted">
+                    {" "}
+                    {s.perfWeek != null ? `W ${fmtPct(s.perfWeek)}` : ""}
+                  </span>
+                </div>
+                <div className="sector-right">
+                  <span className="muted">{s.volume}</span>
+                  <span className={pctClass(s.changePct)}>{fmtPct(s.changePct)}</span>
+                </div>
+                <div
+                  className={`heat ${(s.changePct ?? 0) >= 0 ? "up" : "down"}`}
+                  style={{
+                    width: `${Math.min(100, Math.abs(s.changePct ?? 0) * 28)}%`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel span-2">
+          <PanelHead title="Finviz news wire" sub="Headlines aggregated on Finviz News" />
+          <ul className="news-list">
+            {(data?.finviz?.news ?? []).slice(0, 12).map((n) => (
+              <li key={n.url}>
+                <a href={n.url} target="_blank" rel="noreferrer">
+                  {n.title}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
 

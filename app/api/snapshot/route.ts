@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getFinvizBundle, type FinvizBundle } from "@/lib/finviz";
 import yf, { toQuoteRow, type QuoteRow } from "@/lib/yahoo";
 import {
   EARNINGS_WATCHLIST,
@@ -53,7 +54,7 @@ export async function GET() {
   const indexSymbols = INDEX_PROXIES.map((x) => x.symbol);
   const sectorSymbols = SECTOR_ETFS.map((x) => x.symbol);
 
-  const [quotesRaw, gainers, actives, political, flow, earnings] =
+  const [quotesRaw, gainers, actives, political, flow, earnings, finviz] =
     await Promise.all([
       safeQuotes([...indexSymbols, ...sectorSymbols]),
       safeScreener("day_gainers", 15),
@@ -61,6 +62,7 @@ export async function GET() {
       safePolitical(),
       safeIndexFlow(),
       safeEarnings(),
+      getFinvizBundle(),
     ]);
 
   const bySymbol = new Map(quotesRaw.map((q) => [q.symbol, q]));
@@ -88,15 +90,16 @@ export async function GET() {
     earnings,
     political,
     flow,
+    finviz,
   });
 
   return NextResponse.json({
     asOf: new Date().toISOString(),
     latencyMs: Date.now() - started,
     source:
-      "Yahoo Finance (unofficial, free) + Kadoa Congress/OGE public dataset",
+      "Yahoo Finance + Finviz (free HTML screens) + Kadoa Congress/OGE public dataset",
     disclaimer:
-      "Free feeds are near-realtime during RTH and may be delayed. Not investment advice. Political filings are lagged disclosures.",
+      "Free feeds are near-realtime during RTH and may be delayed. Not investment advice. Political filings are lagged disclosures. Finviz is scraped from public pages and can rate-limit.",
     indexes,
     sectors,
     gainers: gainers.slice(0, 12),
@@ -104,6 +107,7 @@ export async function GET() {
     flow,
     earnings,
     political,
+    finviz,
     ideas,
   });
 }
@@ -396,6 +400,7 @@ function buildIdeas(input: {
     relativeNqMinusEs: number | null;
     series: Record<string, { regime: string; changePct: number | null; aggression: number | null }>;
   };
+  finviz: FinvizBundle;
 }) {
   const ideas: Array<{
     id: string;
@@ -479,16 +484,57 @@ function buildIdeas(input: {
   }
 
   for (const u of input.unusualVolume.slice(0, 4)) {
+    const onFinviz = input.finviz.unusualVolume.find((f) => f.symbol === u.symbol);
+    const reasons = [
+      `Yahoo RVOL ${(u.relativeVolume ?? 0).toFixed(2)}x vs 3M avg`,
+      `Session ${u.changePct != null ? `${u.changePct.toFixed(2)}%` : "n/a"}`,
+    ];
+    let confidence = 50 + Math.round((u.relativeVolume ?? 1) * 10);
+    if (onFinviz) {
+      confidence += 12;
+      reasons.push(
+        `Also on Finviz unusual volume (${onFinviz.changePct != null ? `${onFinviz.changePct.toFixed(2)}%` : "n/a"})`,
+      );
+    }
     ideas.push({
       id: `rvol-${u.symbol}`,
       title: `${u.symbol} unusual volume`,
-      confidence: Math.min(88, 50 + Math.round((u.relativeVolume ?? 1) * 10)),
+      confidence: Math.min(92, confidence),
       bias: (u.changePct ?? 0) >= 0 ? "long" : "short",
-      reasons: [
-        `RVOL ${(u.relativeVolume ?? 0).toFixed(2)}x vs 3M avg`,
-        `Session ${u.changePct != null ? `${u.changePct.toFixed(2)}%` : "n/a"}`,
-      ],
+      reasons,
       symbol: u.symbol,
+    });
+  }
+
+  for (const f of input.finviz.unusualVolume.slice(0, 4)) {
+    if (ideas.some((i) => i.symbol === f.symbol && i.id.startsWith("rvol-"))) continue;
+    ideas.push({
+      id: `fv-rvol-${f.symbol}`,
+      title: `${f.symbol} Finviz unusual volume`,
+      confidence: Math.min(86, 54 + Math.abs(f.changePct ?? 0) / 2),
+      bias: (f.changePct ?? 0) >= 0 ? "long" : "short",
+      reasons: [
+        `${f.company || f.symbol} · ${f.sector || "n/a"}`,
+        `Finviz change ${f.changePct != null ? `${f.changePct.toFixed(2)}%` : "n/a"} · vol ${f.volume ?? "n/a"}`,
+      ],
+      symbol: f.symbol,
+    });
+  }
+
+  const topSector = input.finviz.sectors[0];
+  if (topSector?.changePct != null) {
+    ideas.push({
+      id: "fv-sector-lead",
+      title: `Finviz sector lead: ${topSector.name}`,
+      confidence: Math.min(84, 58 + Math.abs(topSector.changePct) * 4),
+      bias: topSector.changePct >= 0 ? "long" : "short",
+      reasons: [
+        `Session ${topSector.changePct >= 0 ? "+" : ""}${topSector.changePct.toFixed(2)}%`,
+        topSector.perfWeek != null
+          ? `Week ${topSector.perfWeek >= 0 ? "+" : ""}${topSector.perfWeek.toFixed(2)}%`
+          : "Week n/a",
+        `Volume ${topSector.volume}`,
+      ],
     });
   }
 
