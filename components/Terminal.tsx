@@ -92,6 +92,96 @@ type Snapshot = {
     sectors: FinvizSector[];
     news: Array<{ title: string; url: string }>;
   };
+  crypto?: {
+    ok: boolean;
+    error?: string;
+    source: string;
+    scannedCoins: number;
+    scannedPairs: number;
+    global: {
+      activeCryptocurrencies: number | null;
+      totalMarketCapUsd: number | null;
+      totalVolumeUsd: number | null;
+      btcDominance: number | null;
+      ethDominance: number | null;
+      marketCapChange24h: number | null;
+    };
+    topMarketCap: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      price: number | null;
+      change24h: number | null;
+      volume24h: number | null;
+      marketCap: number | null;
+      marketCapRank: number | null;
+      url: string;
+    }>;
+    gainers: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      change24h: number | null;
+      volume24h: number | null;
+      price: number | null;
+      url: string;
+    }>;
+    losers: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      change24h: number | null;
+      volume24h: number | null;
+      price: number | null;
+      url: string;
+    }>;
+    volumeLeaders: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      change24h: number | null;
+      volume24h: number | null;
+      price: number | null;
+      url: string;
+    }>;
+    trending: Array<{
+      id: string;
+      symbol: string;
+      name: string;
+      rank: number | null;
+      url: string;
+    }>;
+    binance: {
+      usdtGainers: Array<{
+        symbol: string;
+        base: string;
+        change24h: number | null;
+        volumeQuote: number | null;
+        price: number | null;
+      }>;
+      usdtLosers: Array<{
+        symbol: string;
+        base: string;
+        change24h: number | null;
+        volumeQuote: number | null;
+        price: number | null;
+      }>;
+      usdtVolume: Array<{
+        symbol: string;
+        base: string;
+        change24h: number | null;
+        volumeQuote: number | null;
+        price: number | null;
+      }>;
+      newListingsProxy: Array<{
+        symbol: string;
+        base: string;
+        change24h: number | null;
+        volumeQuote: number | null;
+        price: number | null;
+      }>;
+    };
+  };
   ideas: Idea[];
   flow: {
     note: string;
@@ -122,6 +212,9 @@ export default function Terminal() {
   const [fvTab, setFvTab] = useState<
     "unusual" | "gainers" | "losers" | "active" | "earnings"
   >("unusual");
+  const [cryptoTab, setCryptoTab] = useState<
+    "gainers" | "losers" | "volume" | "binance" | "movers" | "top"
+  >("gainers");
 
   useEffect(() => {
     let alive = true;
@@ -171,6 +264,68 @@ export default function Terminal() {
             ? data?.finviz?.mostActive ?? []
             : data?.finviz?.earningsThisWeek ?? [];
 
+  const crypto = data?.crypto;
+  const cryptoRows =
+    cryptoTab === "gainers"
+      ? (crypto?.gainers ?? []).map((c) => ({
+          key: c.id,
+          symbol: c.symbol,
+          name: c.name,
+          price: c.price,
+          change: c.change24h,
+          volume: c.volume24h,
+          href: c.url,
+        }))
+      : cryptoTab === "losers"
+        ? (crypto?.losers ?? []).map((c) => ({
+            key: c.id,
+            symbol: c.symbol,
+            name: c.name,
+            price: c.price,
+            change: c.change24h,
+            volume: c.volume24h,
+            href: c.url,
+          }))
+        : cryptoTab === "volume"
+          ? (crypto?.volumeLeaders ?? []).map((c) => ({
+              key: c.id,
+              symbol: c.symbol,
+              name: c.name,
+              price: c.price,
+              change: c.change24h,
+              volume: c.volume24h,
+              href: c.url,
+            }))
+          : cryptoTab === "top"
+            ? (crypto?.topMarketCap ?? []).map((c) => ({
+                key: c.id,
+                symbol: c.symbol,
+                name: c.name,
+                price: c.price,
+                change: c.change24h,
+                volume: c.volume24h,
+                href: c.url,
+              }))
+            : cryptoTab === "movers"
+              ? (crypto?.binance.newListingsProxy ?? []).map((p) => ({
+                  key: p.symbol,
+                  symbol: p.base,
+                  name: p.symbol,
+                  price: p.price,
+                  change: p.change24h,
+                  volume: p.volumeQuote,
+                  href: `https://www.binance.com/en/trade/${p.base}_USDT`,
+                }))
+              : (crypto?.binance.usdtGainers ?? []).map((p) => ({
+                  key: p.symbol,
+                  symbol: p.base,
+                  name: p.symbol,
+                  price: p.price,
+                  change: p.change24h,
+                  volume: p.volumeQuote,
+                  href: `https://www.binance.com/en/trade/${p.base}_USDT`,
+                }));
+
   return (
     <div className="terminal">
       <header className="topbar">
@@ -188,7 +343,7 @@ export default function Terminal() {
             <span>
               {data
                 ? `${fmtTime(data.asOf)} · ${data.latencyMs}ms · refresh ${REFRESH_MS / 1000}s`
-                : "Yahoo + Finviz + political disclosures"}
+                : "Yahoo + Finviz + crypto + political"}
             </span>
           </div>
         </div>
@@ -213,7 +368,7 @@ export default function Terminal() {
         <section className="panel span-2">
           <PanelHead
             title="AI confluence ideas"
-            sub="Scored from index flow proxy + unusual volume + pre-earnings + political disclosures"
+            sub="Scored from index flow, equities, Finviz, crypto market scan, and political disclosures"
           />
           <div className="ideas">
             {(data?.ideas ?? []).length === 0 && loading ? (
@@ -581,6 +736,128 @@ export default function Terminal() {
             ))}
           </ul>
         </section>
+
+        <section className="panel span-2">
+          <div className="panel-head row">
+            <div>
+              <h2>Crypto market radar</h2>
+              <p>
+                {crypto?.ok
+                  ? `Universe ~${crypto.global.activeCryptocurrencies?.toLocaleString() ?? "—"} coins · scanned ${crypto.scannedCoins} by mcap + ${crypto.scannedPairs.toLocaleString()} Binance pairs`
+                  : crypto?.error ?? "Loading crypto…"}
+              </p>
+            </div>
+            <div className="tabs">
+              {(
+                [
+                  ["gainers", "CG Gainers"],
+                  ["losers", "CG Losers"],
+                  ["volume", "CG Volume"],
+                  ["top", "Top Mcap"],
+                  ["binance", "Binance"],
+                  ["movers", "Wild USDT"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={cryptoTab === id ? "active" : undefined}
+                  onClick={() => setCryptoTab(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flow-lead">
+            <div>
+              <div className="muted">Total mcap</div>
+              <strong>{fmtUsd(crypto?.global.totalMarketCapUsd)}</strong>
+            </div>
+            <div>
+              <div className="muted">24h mcap Δ</div>
+              <strong className={pctClass(crypto?.global.marketCapChange24h ?? null)}>
+                {fmtPct(crypto?.global.marketCapChange24h ?? null)}
+              </strong>
+            </div>
+            <div>
+              <div className="muted">BTC / ETH dom</div>
+              <strong>
+                {crypto?.global.btcDominance != null
+                  ? `${crypto.global.btcDominance.toFixed(1)}%`
+                  : "—"}
+                {" / "}
+                {crypto?.global.ethDominance != null
+                  ? `${crypto.global.ethDominance.toFixed(1)}%`
+                  : "—"}
+              </strong>
+            </div>
+            <div>
+              <div className="muted">24h volume</div>
+              <strong>{fmtUsd(crypto?.global.totalVolumeUsd)}</strong>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>24h</th>
+                <th>Volume</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cryptoRows.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="muted">
+                    No crypto rows yet.
+                  </td>
+                </tr>
+              ) : (
+                cryptoRows.slice(0, 20).map((r) => (
+                  <tr key={r.key}>
+                    <td>
+                      <a href={r.href} target="_blank" rel="noreferrer">
+                        {r.symbol}
+                      </a>
+                    </td>
+                    <td>{r.name}</td>
+                    <td>{fmtCryptoPrice(r.price)}</td>
+                    <td className={pctClass(r.change)}>{fmtPct(r.change)}</td>
+                    <td>{fmtUsd(r.volume)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </section>
+
+        <section className="panel">
+          <PanelHead title="Crypto trending" sub="CoinGecko search trending" />
+          <table>
+            <thead>
+              <tr>
+                <th>Coin</th>
+                <th>Name</th>
+                <th>Rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(crypto?.trending ?? []).map((t) => (
+                <tr key={t.id}>
+                  <td>
+                    <a href={t.url} target="_blank" rel="noreferrer">
+                      {t.symbol}
+                    </a>
+                  </td>
+                  <td>{t.name}</td>
+                  <td>{t.rank ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       </div>
 
       <footer className="foot">
@@ -639,6 +916,23 @@ function placeholders(n: number): Quote[] {
 function fmtPrice(v: number | null | undefined) {
   if (v == null) return "—";
   return v >= 1000 ? v.toFixed(1) : v.toFixed(2);
+}
+
+function fmtCryptoPrice(v: number | null | undefined) {
+  if (v == null) return "—";
+  if (v >= 1000) return v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  if (v >= 1) return v.toFixed(4);
+  if (v >= 0.01) return v.toFixed(6);
+  return v.toExponential(2);
+}
+
+function fmtUsd(v: number | null | undefined) {
+  if (v == null) return "—";
+  if (v >= 1e12) return `$${(v / 1e12).toFixed(2)}T`;
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
+  if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
+  return `$${v.toFixed(0)}`;
 }
 
 function fmtPct(v: number | null | undefined, signed = true) {

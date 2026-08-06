@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCryptoBundle, type CryptoBundle } from "@/lib/crypto";
 import { getFinvizBundle, type FinvizBundle } from "@/lib/finviz";
 import yf, { toQuoteRow, type QuoteRow } from "@/lib/yahoo";
 import {
@@ -55,16 +56,25 @@ export async function GET() {
   const indexSymbols = INDEX_PROXIES.map((x) => x.symbol);
   const sectorSymbols = SECTOR_ETFS.map((x) => x.symbol);
 
-  const [quotesRaw, gainers, actives, political, flow, earnings, finviz] =
-    await Promise.all([
-      safeQuotes([...indexSymbols, ...sectorSymbols]),
-      safeScreener("day_gainers", 15),
-      safeScreener("most_actives", 20),
-      safePolitical(),
-      safeIndexFlow(),
-      safeEarnings(),
-      getFinvizBundle(),
-    ]);
+  const [
+    quotesRaw,
+    gainers,
+    actives,
+    political,
+    flow,
+    earnings,
+    finviz,
+    crypto,
+  ] = await Promise.all([
+    safeQuotes([...indexSymbols, ...sectorSymbols]),
+    safeScreener("day_gainers", 15),
+    safeScreener("most_actives", 20),
+    safePolitical(),
+    safeIndexFlow(),
+    safeEarnings(),
+    getFinvizBundle(),
+    getCryptoBundle(),
+  ]);
 
   const bySymbol = new Map(quotesRaw.map((q) => [q.symbol, q]));
 
@@ -92,15 +102,16 @@ export async function GET() {
     political,
     flow,
     finviz,
+    crypto,
   });
 
   return NextResponse.json({
     asOf: new Date().toISOString(),
     latencyMs: Date.now() - started,
     source:
-      "Yahoo Finance + Finviz (free HTML screens) + Kadoa Congress/OGE public dataset",
+      "Yahoo Finance + Finviz + CoinGecko/Binance crypto + Kadoa Congress/OGE",
     disclaimer:
-      "Free feeds are near-realtime during RTH and may be delayed. Not investment advice. Political filings are lagged disclosures. Finviz is scraped from public pages and can rate-limit.",
+      "Free feeds are near-realtime and may be delayed. Not investment advice. Political filings are lagged. Crypto scan covers CoinGecko top 1000 by mcap + full Binance spot 24h book (not every illiquid chain token).",
     indexes,
     sectors,
     gainers: gainers.slice(0, 12),
@@ -109,6 +120,7 @@ export async function GET() {
     earnings,
     political,
     finviz,
+    crypto,
     ideas,
   });
 }
@@ -402,6 +414,7 @@ function buildIdeas(input: {
     series: Record<string, { regime: string; changePct: number | null; aggression: number | null }>;
   };
   finviz: FinvizBundle;
+  crypto: CryptoBundle;
 }) {
   const ideas: Array<{
     id: string;
@@ -555,5 +568,60 @@ function buildIdeas(input: {
     });
   }
 
-  return ideas.sort((a, b) => b.confidence - a.confidence).slice(0, 12);
+  if (input.crypto.ok) {
+    const g = input.crypto.global;
+    if (g.marketCapChange24h != null) {
+      ideas.push({
+        id: "crypto-regime",
+        title: `Crypto market ${g.marketCapChange24h >= 0 ? "risk-on" : "risk-off"}`,
+        confidence: Math.min(88, 55 + Math.abs(g.marketCapChange24h) * 3),
+        bias: g.marketCapChange24h >= 0 ? "long" : "short",
+        reasons: [
+          `Total mcap 24h ${g.marketCapChange24h >= 0 ? "+" : ""}${g.marketCapChange24h.toFixed(2)}%`,
+          `BTC dominance ${g.btcDominance != null ? `${g.btcDominance.toFixed(1)}%` : "n/a"}`,
+          `Scanned ${input.crypto.scannedCoins} coins + ${input.crypto.scannedPairs} Binance pairs`,
+        ],
+        symbol: "BTC",
+      });
+    }
+    for (const c of input.crypto.gainers.slice(0, 3)) {
+      ideas.push({
+        id: `cg-${c.id}`,
+        title: `${c.symbol} crypto gainer`,
+        confidence: Math.min(90, 50 + Math.abs(c.change24h ?? 0) / 2),
+        bias: "long",
+        reasons: [
+          `24h ${c.change24h != null ? `+${c.change24h.toFixed(1)}%` : "n/a"}`,
+          `Vol $${fmtCompact(c.volume24h)} · mcap rank ${c.marketCapRank ?? "n/a"}`,
+          "From CoinGecko top-1000 market scan",
+        ],
+        symbol: c.symbol,
+      });
+    }
+    for (const p of input.crypto.binance.usdtGainers.slice(0, 2)) {
+      ideas.push({
+        id: `bn-${p.symbol}`,
+        title: `${p.base} Binance USDT spike`,
+        confidence: Math.min(88, 52 + Math.abs(p.change24h ?? 0) / 2),
+        bias: (p.change24h ?? 0) >= 0 ? "long" : "short",
+        reasons: [
+          `24h ${p.change24h != null ? `${p.change24h.toFixed(1)}%` : "n/a"}`,
+          `Quote vol $${fmtCompact(p.volumeQuote)}`,
+          "Full Binance spot book scan",
+        ],
+        symbol: p.base,
+      });
+    }
+  }
+
+  return ideas.sort((a, b) => b.confidence - a.confidence).slice(0, 14);
+}
+
+function fmtCompact(v: number | null | undefined): string {
+  if (v == null) return "n/a";
+  if (v >= 1e12) return `${(v / 1e12).toFixed(2)}T`;
+  if (v >= 1e9) return `${(v / 1e9).toFixed(2)}B`;
+  if (v >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
+  if (v >= 1e3) return `${(v / 1e3).toFixed(1)}K`;
+  return v.toFixed(0);
 }

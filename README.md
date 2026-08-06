@@ -12,6 +12,7 @@ This is a separate product from Undercutters.
 - Unusual volume + session gainers
 - Pre-earnings radar (T−4…T−1) on a liquid watchlist
 - Pelosi / Trump / Congress political disclosures (public STOCK Act + OGE data)
+- Crypto market radar: CoinGecko top 1000 by mcap + full Binance spot 24h book
 - Confluence idea cards with confidence scores
 
 ## Data sources (free)
@@ -22,6 +23,7 @@ This is a separate product from Undercutters.
 | Sector groups + news | Finviz public HTML (live) | Polled ~20s |
 | Unusual vol / gainers / losers / most active / EA week | Finviz public screens via CI cache (`public/data/finviz-cache.json`) | GitHub Action ~30m (Vercel IPs are Cloudflare-blocked) |
 | Political / OGE trades | [kadoa-org/congress-trading-monitor](https://github.com/kadoa-org/congress-trading-monitor) public JSON | Cached ~30m |
+| Crypto universe | CoinGecko global/markets/trending + Binance `/ticker/24hr` (all spot pairs) | Polled ~20s |
 
 **Limits:** free feeds can be delayed, rate-limited, or change without notice. Finviz has no official free API — we parse public pages. True tick-level orderflow, dark pool, and options flow require paid vendors.
 
