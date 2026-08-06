@@ -89,7 +89,11 @@ type BinanceTicker = {
 };
 
 const GECKO = "https://api.coingecko.com/api/v3";
-const BINANCE = "https://api.binance.com/api/v3";
+const BINANCE_ENDPOINTS = [
+  "https://data-api.binance.vision/api/v3",
+  "https://api.binance.us/api/v3",
+  "https://api.binance.com/api/v3",
+];
 
 async function getJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -183,17 +187,29 @@ async function fetchGeckoUniverse(pages = 4): Promise<CryptoCoin[]> {
   return out;
 }
 
-async function fetchBinanceUniverse(): Promise<CryptoPair[]> {
-  const tickers = await getJson<BinanceTicker[]>(`${BINANCE}/ticker/24hr`);
-  const pairs: CryptoPair[] = [];
-  for (const t of tickers) {
-    const p = parsePair(t);
-    if (!p) continue;
-    // Skip microscopic dust / zero volume
-    if ((p.volumeQuote ?? 0) < 1000 && (p.volumeBase ?? 0) < 1) continue;
-    pairs.push(p);
+async function fetchBinanceUniverse(): Promise<{
+  pairs: CryptoPair[];
+  endpoint: string | null;
+  error?: string;
+}> {
+  const errors: string[] = [];
+  for (const base of BINANCE_ENDPOINTS) {
+    try {
+      const tickers = await getJson<BinanceTicker[]>(`${base}/ticker/24hr`);
+      const pairs: CryptoPair[] = [];
+      for (const t of tickers) {
+        const p = parsePair(t);
+        if (!p) continue;
+        if ((p.volumeQuote ?? 0) < 1000 && (p.volumeBase ?? 0) < 1) continue;
+        pairs.push(p);
+      }
+      if (pairs.length) return { pairs, endpoint: base };
+      errors.push(`${base}: empty`);
+    } catch (e) {
+      errors.push(`${base}: ${e instanceof Error ? e.message : "fail"}`);
+    }
   }
-  return pairs;
+  return { pairs: [], endpoint: null, error: errors.join(" | ") };
 }
 
 export async function getCryptoBundle(): Promise<CryptoBundle> {
@@ -225,107 +241,146 @@ export async function getCryptoBundle(): Promise<CryptoBundle> {
     },
   };
 
-  try {
-    const [globalRaw, coins, pairs, trendingRaw] = await Promise.all([
-      getJson<{
-        data: {
-          active_cryptocurrencies: number;
-          markets: number;
-          total_market_cap: { usd: number };
-          total_volume: { usd: number };
-          market_cap_percentage: { btc: number; eth: number };
-          market_cap_change_percentage_24h_usd: number;
+  const errors: string[] = [];
+
+  const globalRes = await Promise.allSettled([
+    getJson<{
+      data: {
+        active_cryptocurrencies: number;
+        markets: number;
+        total_market_cap: { usd: number };
+        total_volume: { usd: number };
+        market_cap_percentage: { btc: number; eth: number };
+        market_cap_change_percentage_24h_usd: number;
+      };
+    }>(`${GECKO}/global`),
+  ]);
+  const coinsRes = await Promise.allSettled([fetchGeckoUniverse(4)]);
+  const trendingRes = await Promise.allSettled([
+    getJson<{
+      coins: Array<{
+        item: {
+          id: string;
+          symbol: string;
+          name: string;
+          market_cap_rank: number | null;
+          score: number | null;
         };
-      }>(`${GECKO}/global`),
-      fetchGeckoUniverse(4),
-      fetchBinanceUniverse(),
-      getJson<{
-        coins: Array<{
-          item: {
-            id: string;
-            symbol: string;
-            name: string;
-            market_cap_rank: number | null;
-            score: number | null;
-          };
-        }>;
-      }>(`${GECKO}/search/trending`),
-    ]);
+      }>;
+    }>(`${GECKO}/search/trending`),
+  ]);
+  const binanceRes = await fetchBinanceUniverse();
 
-    const g = globalRaw.data;
-    const withChange = coins.filter((c) => c.change24h != null);
-    const gainers = [...withChange]
-      .sort((a, b) => (b.change24h ?? -999) - (a.change24h ?? -999))
-      .slice(0, 25);
-    const losers = [...withChange]
-      .sort((a, b) => (a.change24h ?? 999) - (b.change24h ?? 999))
-      .slice(0, 25);
-    const volumeLeaders = [...coins]
-      .sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0))
-      .slice(0, 25);
-
-    const usdt = pairs.filter((p) => p.quote === "USDT");
-    const usdtGainers = [...usdt]
-      .filter((p) => (p.volumeQuote ?? 0) > 100_000)
-      .sort((a, b) => (b.change24h ?? -999) - (a.change24h ?? -999))
-      .slice(0, 25);
-    const usdtLosers = [...usdt]
-      .filter((p) => (p.volumeQuote ?? 0) > 100_000)
-      .sort((a, b) => (a.change24h ?? 999) - (b.change24h ?? 999))
-      .slice(0, 25);
-    const usdtVolume = [...usdt]
-      .sort((a, b) => (b.volumeQuote ?? 0) - (a.volumeQuote ?? 0))
-      .slice(0, 25);
-    // Proxy for "new / thin discovery": high % move with moderate notional
-    const newListingsProxy = [...usdt]
-      .filter(
-        (p) =>
-          Math.abs(p.change24h ?? 0) >= 15 &&
-          (p.volumeQuote ?? 0) > 50_000 &&
-          (p.volumeQuote ?? 0) < 5_000_000,
-      )
-      .sort((a, b) => Math.abs(b.change24h ?? 0) - Math.abs(a.change24h ?? 0))
-      .slice(0, 20);
-
-    return {
-      asOf: new Date().toISOString(),
-      ok: true,
-      source:
-        "CoinGecko (global + top 1000 by mcap + trending) + Binance (full spot 24h book)",
-      global: {
-        activeCryptocurrencies: g.active_cryptocurrencies ?? null,
-        markets: g.markets ?? null,
-        totalMarketCapUsd: g.total_market_cap?.usd ?? null,
-        totalVolumeUsd: g.total_volume?.usd ?? null,
-        btcDominance: g.market_cap_percentage?.btc ?? null,
-        ethDominance: g.market_cap_percentage?.eth ?? null,
-        marketCapChange24h: g.market_cap_change_percentage_24h_usd ?? null,
-      },
-      scannedCoins: coins.length,
-      scannedPairs: pairs.length,
-      topMarketCap: coins.slice(0, 40),
-      gainers,
-      losers,
-      volumeLeaders,
-      trending: (trendingRaw.coins ?? []).map((c) => ({
-        id: c.item.id,
-        symbol: c.item.symbol?.toUpperCase?.() ?? c.item.symbol,
-        name: c.item.name,
-        rank: c.item.market_cap_rank,
-        score: c.item.score,
-        url: `https://www.coingecko.com/en/coins/${c.item.id}`,
-      })),
-      binance: {
-        usdtGainers,
-        usdtLosers,
-        usdtVolume,
-        newListingsProxy,
-      },
-    };
-  } catch (e) {
-    return {
-      ...empty,
-      error: e instanceof Error ? e.message : "Crypto fetch failed",
-    };
+  const globalRaw =
+    globalRes[0].status === "fulfilled" ? globalRes[0].value : null;
+  if (globalRes[0].status === "rejected") {
+    errors.push(`global: ${errMsg(globalRes[0].reason)}`);
   }
+
+  let coins =
+    coinsRes[0].status === "fulfilled" ? coinsRes[0].value : [];
+  if (coinsRes[0].status === "rejected") {
+    errors.push(`markets: ${errMsg(coinsRes[0].reason)}`);
+  }
+
+  const trendingRaw =
+    trendingRes[0].status === "fulfilled" ? trendingRes[0].value : { coins: [] };
+  if (trendingRes[0].status === "rejected") {
+    errors.push(`trending: ${errMsg(trendingRes[0].reason)}`);
+  }
+
+  // If Binance is geo-blocked, deepen the CoinGecko scan for broader coverage.
+  if (!binanceRes.pairs.length && coins.length > 0) {
+    try {
+      const extra = await fetchGeckoUniverse(8); // up to 2000 by mcap
+      coins = extra;
+    } catch (e) {
+      errors.push(`deep-scan: ${errMsg(e)}`);
+    }
+  }
+
+  if (binanceRes.error) errors.push(`binance: ${binanceRes.error}`);
+  const pairs = binanceRes.pairs;
+
+  const g = globalRaw?.data;
+  const withChange = coins.filter((c) => c.change24h != null);
+  const gainers = [...withChange]
+    .sort((a, b) => (b.change24h ?? -999) - (a.change24h ?? -999))
+    .slice(0, 25);
+  const losers = [...withChange]
+    .sort((a, b) => (a.change24h ?? 999) - (b.change24h ?? 999))
+    .slice(0, 25);
+  const volumeLeaders = [...coins]
+    .sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0))
+    .slice(0, 25);
+
+  const usdt = pairs.filter((p) => p.quote === "USDT");
+  const usdtGainers = [...usdt]
+    .filter((p) => (p.volumeQuote ?? 0) > 100_000)
+    .sort((a, b) => (b.change24h ?? -999) - (a.change24h ?? -999))
+    .slice(0, 25);
+  const usdtLosers = [...usdt]
+    .filter((p) => (p.volumeQuote ?? 0) > 100_000)
+    .sort((a, b) => (a.change24h ?? 999) - (b.change24h ?? 999))
+    .slice(0, 25);
+  const usdtVolume = [...usdt]
+    .sort((a, b) => (b.volumeQuote ?? 0) - (a.volumeQuote ?? 0))
+    .slice(0, 25);
+  const newListingsProxy = [...usdt]
+    .filter(
+      (p) =>
+        Math.abs(p.change24h ?? 0) >= 15 &&
+        (p.volumeQuote ?? 0) > 50_000 &&
+        (p.volumeQuote ?? 0) < 5_000_000,
+    )
+    .sort((a, b) => Math.abs(b.change24h ?? 0) - Math.abs(a.change24h ?? 0))
+    .slice(0, 20);
+
+  const ok = coins.length > 0 || pairs.length > 0 || Boolean(g);
+
+  return {
+    ...empty,
+    asOf: new Date().toISOString(),
+    ok,
+    error: errors.length ? errors.join("; ") : undefined,
+    source: [
+      "CoinGecko (global + top 1000 by mcap + trending)",
+      binanceRes.endpoint
+        ? `Binance spot 24h via ${binanceRes.endpoint}`
+        : "Binance unavailable from this region",
+    ].join(" + "),
+    global: {
+      activeCryptocurrencies: g?.active_cryptocurrencies ?? null,
+      markets: g?.markets ?? null,
+      totalMarketCapUsd: g?.total_market_cap?.usd ?? null,
+      totalVolumeUsd: g?.total_volume?.usd ?? null,
+      btcDominance: g?.market_cap_percentage?.btc ?? null,
+      ethDominance: g?.market_cap_percentage?.eth ?? null,
+      marketCapChange24h: g?.market_cap_change_percentage_24h_usd ?? null,
+    },
+    scannedCoins: coins.length,
+    scannedPairs: pairs.length,
+    topMarketCap: coins.slice(0, 40),
+    gainers,
+    losers,
+    volumeLeaders,
+    trending: (trendingRaw.coins ?? []).map((c) => ({
+      id: c.item.id,
+      symbol: c.item.symbol?.toUpperCase?.() ?? c.item.symbol,
+      name: c.item.name,
+      rank: c.item.market_cap_rank,
+      score: c.item.score,
+      url: `https://www.coingecko.com/en/coins/${c.item.id}`,
+    })),
+    binance: {
+      usdtGainers,
+      usdtLosers,
+      usdtVolume,
+      newListingsProxy,
+    },
+  };
+}
+
+function errMsg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }
