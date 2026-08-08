@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-08T03:57:57.679Z",
+  "asOf": "2026-08-08T06:07:15.080Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -439,7 +439,7 @@
       "sector": "Technology",
       "industry": "Computer Hardware",
       "country": "USA",
-      "marketCap": "1.53B",
+      "marketCap": "1.15B",
       "pe": "46.77",
       "price": 14.35,
       "changePct": 35.25,
@@ -1056,7 +1056,7 @@
       "sector": "Technology",
       "industry": "Communication Equipment",
       "country": "USA",
-      "marketCap": "10.88B",
+      "marketCap": "10.51B",
       "pe": "-",
       "price": 135.63,
       "changePct": 9.19,
@@ -1095,7 +1095,7 @@
       "sector": "Consumer Cyclical",
       "industry": "Travel Services",
       "country": "USA",
-      "marketCap": "107.32B",
+      "marketCap": "90.55B",
       "pe": "40.48",
       "price": 178.07,
       "changePct": 17.43,
