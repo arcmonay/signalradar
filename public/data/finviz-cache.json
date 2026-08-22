@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-22T03:08:12.153Z",
+  "asOf": "2026-08-22T05:01:26.113Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1148,7 +1148,7 @@
       "industry": "Tobacco",
       "country": "United Arab Emirates",
       "marketCap": "1.24B",
-      "pe": "71.60",
+      "pe": "-",
       "price": 7.74,
       "changePct": 6.75,
       "volume": 8538,
