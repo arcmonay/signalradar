@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-26T03:40:11.231Z",
+  "asOf": "2026-08-26T05:53:31.520Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -439,7 +439,7 @@
       "sector": "Financial",
       "industry": "Asset Management",
       "country": "Canada",
-      "marketCap": "139.91M",
+      "marketCap": "109.42M",
       "pe": "-",
       "price": 6.47,
       "changePct": 27.87,
@@ -571,7 +571,7 @@
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
       "country": "USA",
-      "marketCap": "64.48M",
+      "marketCap": "92.43M",
       "pe": "-",
       "price": 1.43,
       "changePct": -30.24,
