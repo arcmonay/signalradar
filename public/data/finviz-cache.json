@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-26T00:01:53.754Z",
+  "asOf": "2026-08-26T03:40:11.231Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1129,6 +1129,19 @@
       "url": "https://finviz.com/quote.ashx?t=AVAT"
     },
     {
+      "symbol": "AVXL",
+      "company": "Anavex Life Sciences Corp",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "country": "USA",
+      "marketCap": "330.00M",
+      "pe": "-",
+      "price": 3.56,
+      "changePct": 14.47,
+      "volume": 2475503,
+      "url": "https://finviz.com/quote.ashx?t=AVXL"
+    },
+    {
       "symbol": "BBAR",
       "company": "BBVA Argentina ADR",
       "sector": "Financial",
@@ -1200,7 +1213,7 @@
       "industry": "Banks - Diversified",
       "country": "Canada",
       "marketCap": "122.50B",
-      "pe": "18.37",
+      "pe": "19.57",
       "price": 173.46,
       "changePct": 0.64,
       "volume": 1342594,
@@ -1213,7 +1226,7 @@
       "industry": "Banks - Diversified",
       "country": "Canada",
       "marketCap": "114.75B",
-      "pe": "17.76",
+      "pe": "16.85",
       "price": 93.1,
       "changePct": 7.18,
       "volume": 4251178,
@@ -1291,24 +1304,11 @@
       "industry": "Engineering & Construction",
       "country": "Denmark",
       "marketCap": "2.51B",
-      "pe": "7.46",
+      "pe": "10.43",
       "price": 26.04,
       "changePct": 8.64,
       "volume": 136763,
       "url": "https://finviz.com/quote.ashx?t=CDLR"
-    },
-    {
-      "symbol": "CHA",
-      "company": "Chagee Holdings Ltd ADR",
-      "sector": "Consumer Cyclical",
-      "industry": "Restaurants",
-      "country": "China",
-      "marketCap": "1.36B",
-      "pe": "15.38",
-      "price": 10.81,
-      "changePct": -0.28,
-      "volume": 315398,
-      "url": "https://finviz.com/quote.ashx?t=CHA"
     }
   ]
 }
