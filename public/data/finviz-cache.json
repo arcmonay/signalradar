@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-29T04:04:10.485Z",
+  "asOf": "2026-08-29T04:34:15.936Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -924,7 +924,7 @@
       "sector": "Financial",
       "industry": "Capital Markets",
       "country": "Australia",
-      "marketCap": "12.65B",
+      "marketCap": "15.95B",
       "pe": "-",
       "price": 35.45,
       "changePct": -12.53,
@@ -1082,7 +1082,7 @@
       "sector": "Financial",
       "industry": "Credit Services",
       "country": "USA",
-      "marketCap": "26.04B",
+      "marketCap": "25.95B",
       "pe": "14.09",
       "price": 77.76,
       "changePct": 0.35,
@@ -1147,7 +1147,7 @@
       "sector": "Technology",
       "industry": "Communication Equipment",
       "country": "USA",
-      "marketCap": "258.79M",
+      "marketCap": "274.47M",
       "pe": "103.31",
       "price": 20,
       "changePct": -6.72,
