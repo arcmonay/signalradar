@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-30T20:34:13.833Z",
+  "asOf": "2026-08-30T21:04:07.618Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -72,7 +72,7 @@
       "company": "Australian Oilseeds Holdings Limited",
       "sector": "Consumer Defensive",
       "industry": "Packaged Foods",
-      "country": "USA",
+      "country": "Australia",
       "marketCap": "21.49M",
       "pe": "-",
       "price": 0.46,
@@ -360,7 +360,7 @@
       "company": "YD Bio Ltd",
       "sector": "Healthcare",
       "industry": "Biotechnology",
-      "country": "USA",
+      "country": "Taiwan",
       "marketCap": "339.98M",
       "pe": "-",
       "price": 4.8,
