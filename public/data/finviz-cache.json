@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-08-30T18:04:16.176Z",
+  "asOf": "2026-08-30T18:34:05.659Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -360,8 +360,8 @@
       "company": "YD Bio Ltd",
       "sector": "Healthcare",
       "industry": "Biotechnology",
-      "country": "Taiwan",
-      "marketCap": "339.99M",
+      "country": "USA",
+      "marketCap": "339.98M",
       "pe": "-",
       "price": 4.8,
       "changePct": 24.03,
