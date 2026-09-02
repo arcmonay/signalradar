@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-02T07:07:59.449Z",
+  "asOf": "2026-09-02T07:38:03.860Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1304,7 +1304,7 @@
       "industry": "Semiconductors",
       "country": "Cayman Islands",
       "marketCap": "38.83B",
-      "pe": "83.33",
+      "pe": "73.63",
       "price": 206.63,
       "changePct": -8.65,
       "volume": 9513664,
