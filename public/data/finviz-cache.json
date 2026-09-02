@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-01T23:34:33.019Z",
+  "asOf": "2026-09-02T00:12:44.156Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -12,7 +12,7 @@
       "pe": "-",
       "price": 2.2,
       "changePct": 61.76,
-      "volume": 82258253,
+      "volume": 82356795,
       "url": "https://finviz.com/quote.ashx?t=FLYE"
     },
     {
@@ -25,7 +25,7 @@
       "pe": "-",
       "price": 0.88,
       "changePct": -24.13,
-      "volume": 16234389,
+      "volume": 16317498,
       "url": "https://finviz.com/quote.ashx?t=AMBR"
     },
     {
@@ -38,7 +38,7 @@
       "pe": "-",
       "price": 0.86,
       "changePct": 11.66,
-      "volume": 29237372,
+      "volume": 29281096,
       "url": "https://finviz.com/quote.ashx?t=MIRA"
     },
     {
@@ -51,7 +51,7 @@
       "pe": "-",
       "price": 6.59,
       "changePct": 44.52,
-      "volume": 46308401,
+      "volume": 46392729,
       "url": "https://finviz.com/quote.ashx?t=BIAF"
     },
     {
@@ -64,7 +64,7 @@
       "pe": "-",
       "price": 4.76,
       "changePct": 77.43,
-      "volume": 34373009,
+      "volume": 34414649,
       "url": "https://finviz.com/quote.ashx?t=SSM"
     },
     {
@@ -90,7 +90,7 @@
       "pe": "-",
       "price": 1.47,
       "changePct": 27.83,
-      "volume": 129784984,
+      "volume": 129991021,
       "url": "https://finviz.com/quote.ashx?t=LIDR"
     },
     {
@@ -103,7 +103,7 @@
       "pe": "-",
       "price": 0.18,
       "changePct": -45.54,
-      "volume": 98714230,
+      "volume": 99005725,
       "url": "https://finviz.com/quote.ashx?t=HKPD"
     },
     {
@@ -168,7 +168,7 @@
       "pe": "46.81",
       "price": 6.45,
       "changePct": 41.45,
-      "volume": 24388614,
+      "volume": 24395472,
       "url": "https://finviz.com/quote.ashx?t=RDAC"
     },
     {
@@ -220,7 +220,7 @@
       "pe": "-",
       "price": 2.43,
       "changePct": 1.25,
-      "volume": 5036713,
+      "volume": 5039447,
       "url": "https://finviz.com/quote.ashx?t=INBS"
     },
     {
@@ -233,7 +233,7 @@
       "pe": "-",
       "price": 0.53,
       "changePct": -20.89,
-      "volume": 9048394,
+      "volume": 9074333,
       "url": "https://finviz.com/quote.ashx?t=KALA"
     },
     {
@@ -246,7 +246,7 @@
       "pe": "8.49",
       "price": 1.48,
       "changePct": 28.7,
-      "volume": 11624149,
+      "volume": 11638257,
       "url": "https://finviz.com/quote.ashx?t=PETZ"
     },
     {
@@ -259,7 +259,7 @@
       "pe": "-",
       "price": 1.23,
       "changePct": 40.38,
-      "volume": 499765043,
+      "volume": 500399093,
       "url": "https://finviz.com/quote.ashx?t=GPRO"
     }
   ],
@@ -274,7 +274,7 @@
       "pe": "-",
       "price": 4.76,
       "changePct": 77.43,
-      "volume": 34373009,
+      "volume": 34414649,
       "url": "https://finviz.com/quote.ashx?t=SSM"
     },
     {
@@ -287,7 +287,7 @@
       "pe": "-",
       "price": 2.2,
       "changePct": 61.76,
-      "volume": 82258253,
+      "volume": 82356795,
       "url": "https://finviz.com/quote.ashx?t=FLYE"
     },
     {
@@ -300,7 +300,7 @@
       "pe": "-",
       "price": 6.59,
       "changePct": 44.52,
-      "volume": 46308401,
+      "volume": 46392729,
       "url": "https://finviz.com/quote.ashx?t=BIAF"
     },
     {
@@ -313,7 +313,7 @@
       "pe": "46.81",
       "price": 6.45,
       "changePct": 41.45,
-      "volume": 24388614,
+      "volume": 24395472,
       "url": "https://finviz.com/quote.ashx?t=RDAC"
     },
     {
@@ -326,7 +326,7 @@
       "pe": "-",
       "price": 1.23,
       "changePct": 40.38,
-      "volume": 499765043,
+      "volume": 500399093,
       "url": "https://finviz.com/quote.ashx?t=GPRO"
     },
     {
@@ -339,7 +339,7 @@
       "pe": "31.44",
       "price": 3.83,
       "changePct": 31.62,
-      "volume": 1005555,
+      "volume": 1015164,
       "url": "https://finviz.com/quote.ashx?t=SWVL"
     },
     {
@@ -352,7 +352,7 @@
       "pe": "8.49",
       "price": 1.48,
       "changePct": 28.7,
-      "volume": 11624149,
+      "volume": 11638257,
       "url": "https://finviz.com/quote.ashx?t=PETZ"
     },
     {
@@ -365,7 +365,7 @@
       "pe": "-",
       "price": 19.75,
       "changePct": 28.41,
-      "volume": 35222916,
+      "volume": 35232544,
       "url": "https://finviz.com/quote.ashx?t=FRVO"
     },
     {
@@ -378,7 +378,7 @@
       "pe": "-",
       "price": 1.47,
       "changePct": 27.83,
-      "volume": 129784984,
+      "volume": 129991021,
       "url": "https://finviz.com/quote.ashx?t=LIDR"
     },
     {
@@ -391,7 +391,7 @@
       "pe": "-",
       "price": 2.84,
       "changePct": 26.79,
-      "volume": 2147294,
+      "volume": 2199386,
       "url": "https://finviz.com/quote.ashx?t=SST"
     },
     {
@@ -404,7 +404,7 @@
       "pe": "-",
       "price": 2.11,
       "changePct": 22.67,
-      "volume": 1542549,
+      "volume": 1545221,
       "url": "https://finviz.com/quote.ashx?t=FBLG"
     },
     {
@@ -417,7 +417,7 @@
       "pe": "-",
       "price": 5.85,
       "changePct": 19.39,
-      "volume": 60595,
+      "volume": 60560,
       "url": "https://finviz.com/quote.ashx?t=GWAV"
     },
     {
@@ -430,7 +430,7 @@
       "pe": "-",
       "price": 12.81,
       "changePct": 16.99,
-      "volume": 810287,
+      "volume": 810443,
       "url": "https://finviz.com/quote.ashx?t=MOVE"
     },
     {
@@ -443,7 +443,7 @@
       "pe": "7.66",
       "price": 6.23,
       "changePct": 16.23,
-      "volume": 1093135,
+      "volume": 1093341,
       "url": "https://finviz.com/quote.ashx?t=PXS"
     },
     {
@@ -456,7 +456,7 @@
       "pe": "-",
       "price": 1.38,
       "changePct": 15.97,
-      "volume": 19923633,
+      "volume": 19938774,
       "url": "https://finviz.com/quote.ashx?t=GYGY"
     },
     {
@@ -469,7 +469,7 @@
       "pe": "-",
       "price": 11.54,
       "changePct": 15.52,
-      "volume": 149165,
+      "volume": 149149,
       "url": "https://finviz.com/quote.ashx?t=PTN"
     },
     {
@@ -482,7 +482,7 @@
       "pe": "-",
       "price": 1.88,
       "changePct": 15.34,
-      "volume": 101648,
+      "volume": 101645,
       "url": "https://finviz.com/quote.ashx?t=PSIG"
     },
     {
@@ -495,7 +495,7 @@
       "pe": "-",
       "price": 11.35,
       "changePct": 15.23,
-      "volume": 364097,
+      "volume": 364073,
       "url": "https://finviz.com/quote.ashx?t=FCUV"
     },
     {
@@ -508,7 +508,7 @@
       "pe": "-",
       "price": 3.73,
       "changePct": 13.37,
-      "volume": 239034,
+      "volume": 239009,
       "url": "https://finviz.com/quote.ashx?t=SOWG"
     },
     {
@@ -521,7 +521,7 @@
       "pe": "-",
       "price": 17.23,
       "changePct": 13.36,
-      "volume": 311457,
+      "volume": 309441,
       "url": "https://finviz.com/quote.ashx?t=FGL"
     }
   ],
@@ -536,7 +536,7 @@
       "pe": "-",
       "price": 9.47,
       "changePct": -56.58,
-      "volume": 28379404,
+      "volume": 28399012,
       "url": "https://finviz.com/quote.ashx?t=ALMS"
     },
     {
@@ -549,7 +549,7 @@
       "pe": "-",
       "price": 3.86,
       "changePct": -54.37,
-      "volume": 1589625,
+      "volume": 1598282,
       "url": "https://finviz.com/quote.ashx?t=PMI"
     },
     {
@@ -562,7 +562,7 @@
       "pe": "-",
       "price": 15.97,
       "changePct": -26.37,
-      "volume": 280114,
+      "volume": 280079,
       "url": "https://finviz.com/quote.ashx?t=MF"
     },
     {
@@ -575,7 +575,7 @@
       "pe": "-",
       "price": 2.88,
       "changePct": -25.96,
-      "volume": 473397,
+      "volume": 473417,
       "url": "https://finviz.com/quote.ashx?t=LHSW"
     },
     {
@@ -588,7 +588,7 @@
       "pe": "-",
       "price": 0.88,
       "changePct": -24.13,
-      "volume": 16234389,
+      "volume": 16317498,
       "url": "https://finviz.com/quote.ashx?t=AMBR"
     },
     {
@@ -601,7 +601,7 @@
       "pe": "-",
       "price": 4.89,
       "changePct": -23.65,
-      "volume": 358449,
+      "volume": 366135,
       "url": "https://finviz.com/quote.ashx?t=DBGI"
     },
     {
@@ -614,7 +614,7 @@
       "pe": "-",
       "price": 1.84,
       "changePct": -23.01,
-      "volume": 594741,
+      "volume": 595050,
       "url": "https://finviz.com/quote.ashx?t=CANG"
     },
     {
@@ -627,7 +627,7 @@
       "pe": "-",
       "price": 5,
       "changePct": -22.96,
-      "volume": 756708,
+      "volume": 757387,
       "url": "https://finviz.com/quote.ashx?t=AEHL"
     },
     {
@@ -640,7 +640,7 @@
       "pe": "-",
       "price": 1.54,
       "changePct": -21.43,
-      "volume": 220740,
+      "volume": 220729,
       "url": "https://finviz.com/quote.ashx?t=SQFT"
     },
     {
@@ -653,7 +653,7 @@
       "pe": "8.12",
       "price": 1.83,
       "changePct": -19.74,
-      "volume": 888609,
+      "volume": 891936,
       "url": "https://finviz.com/quote.ashx?t=YDDL"
     },
     {
@@ -666,7 +666,7 @@
       "pe": "-",
       "price": 3.68,
       "changePct": -18.94,
-      "volume": 170896,
+      "volume": 170883,
       "url": "https://finviz.com/quote.ashx?t=ADBT"
     },
     {
@@ -679,7 +679,7 @@
       "pe": "-",
       "price": 2.61,
       "changePct": -18.44,
-      "volume": 441773,
+      "volume": 441981,
       "url": "https://finviz.com/quote.ashx?t=XXII"
     },
     {
@@ -692,7 +692,7 @@
       "pe": "-",
       "price": 2.31,
       "changePct": -18.37,
-      "volume": 611599,
+      "volume": 611862,
       "url": "https://finviz.com/quote.ashx?t=NCRA"
     },
     {
@@ -705,7 +705,7 @@
       "pe": "-",
       "price": 5.87,
       "changePct": -18.19,
-      "volume": 353926,
+      "volume": 353928,
       "url": "https://finviz.com/quote.ashx?t=CNXU"
     },
     {
@@ -718,7 +718,7 @@
       "pe": "-",
       "price": 1.75,
       "changePct": -17.84,
-      "volume": 76666,
+      "volume": 76716,
       "url": "https://finviz.com/quote.ashx?t=THH"
     },
     {
@@ -731,7 +731,7 @@
       "pe": "-",
       "price": 3.52,
       "changePct": -17.76,
-      "volume": 2401907,
+      "volume": 2404933,
       "url": "https://finviz.com/quote.ashx?t=BRNX"
     },
     {
@@ -744,7 +744,7 @@
       "pe": "1.04",
       "price": 0.88,
       "changePct": -17.61,
-      "volume": 23589674,
+      "volume": 23608863,
       "url": "https://finviz.com/quote.ashx?t=LX"
     },
     {
@@ -757,7 +757,7 @@
       "pe": "-",
       "price": 12.82,
       "changePct": -17.56,
-      "volume": 144004,
+      "volume": 143972,
       "url": "https://finviz.com/quote.ashx?t=AIOS"
     },
     {
@@ -770,7 +770,7 @@
       "pe": "-",
       "price": 2.39,
       "changePct": -17.3,
-      "volume": 65353353,
+      "volume": 65443213,
       "url": "https://finviz.com/quote.ashx?t=RZLV"
     },
     {
@@ -783,7 +783,7 @@
       "pe": "-",
       "price": 1.88,
       "changePct": -17.18,
-      "volume": 31862,
+      "volume": 31869,
       "url": "https://finviz.com/quote.ashx?t=NTCL"
     }
   ],
@@ -798,7 +798,7 @@
       "pe": "-",
       "price": 1.23,
       "changePct": 40.38,
-      "volume": 499765043,
+      "volume": 500399093,
       "url": "https://finviz.com/quote.ashx?t=GPRO"
     },
     {
@@ -811,7 +811,7 @@
       "pe": "10.26",
       "price": 14.06,
       "changePct": 5.95,
-      "volume": 144611964,
+      "volume": 144642556,
       "url": "https://finviz.com/quote.ashx?t=PCG"
     },
     {
@@ -824,7 +824,7 @@
       "pe": "-",
       "price": 1.47,
       "changePct": 27.83,
-      "volume": 129784984,
+      "volume": 129991021,
       "url": "https://finviz.com/quote.ashx?t=LIDR"
     },
     {
@@ -837,7 +837,7 @@
       "pe": "27.49",
       "price": 217.44,
       "changePct": -1.51,
-      "volume": 109660742,
+      "volume": 109756184,
       "url": "https://finviz.com/quote.ashx?t=NVDA"
     },
     {
@@ -850,7 +850,7 @@
       "pe": "-",
       "price": 0.18,
       "changePct": -45.54,
-      "volume": 98714230,
+      "volume": 99005725,
       "url": "https://finviz.com/quote.ashx?t=HKPD"
     },
     {
@@ -863,7 +863,7 @@
       "pe": "-",
       "price": 9.33,
       "changePct": -6.42,
-      "volume": 92749280,
+      "volume": 92843269,
       "url": "https://finviz.com/quote.ashx?t=TSLL"
     },
     {
@@ -876,7 +876,7 @@
       "pe": "-",
       "price": 4.05,
       "changePct": 3.05,
-      "volume": 91716610,
+      "volume": 91767914,
       "url": "https://finviz.com/quote.ashx?t=NVD"
     },
     {
@@ -889,7 +889,7 @@
       "pe": "-",
       "price": 0.09,
       "changePct": -4.13,
-      "volume": 86988983,
+      "volume": 87090795,
       "url": "https://finviz.com/quote.ashx?t=RITR"
     },
     {
@@ -902,7 +902,7 @@
       "pe": "-",
       "price": 2.2,
       "changePct": 61.76,
-      "volume": 82258253,
+      "volume": 82356795,
       "url": "https://finviz.com/quote.ashx?t=FLYE"
     },
     {
@@ -915,7 +915,7 @@
       "pe": "-",
       "price": 4.06,
       "changePct": -4.02,
-      "volume": 81421748,
+      "volume": 81892919,
       "url": "https://finviz.com/quote.ashx?t=NIO"
     },
     {
@@ -928,7 +928,7 @@
       "pe": "-",
       "price": 88.97,
       "changePct": -0.6,
-      "volume": 73890564,
+      "volume": 73962063,
       "url": "https://finviz.com/quote.ashx?t=INTC"
     },
     {
@@ -941,7 +941,7 @@
       "pe": "78.75",
       "price": 7.04,
       "changePct": -8.03,
-      "volume": 68725433,
+      "volume": 68793571,
       "url": "https://finviz.com/quote.ashx?t=ONDS"
     },
     {
@@ -954,7 +954,7 @@
       "pe": "19.68",
       "price": 14.46,
       "changePct": -0.62,
-      "volume": 67505262,
+      "volume": 67509473,
       "url": "https://finviz.com/quote.ashx?t=NU"
     },
     {
@@ -967,7 +967,7 @@
       "pe": "-",
       "price": 13.71,
       "changePct": -4.66,
-      "volume": 67081739,
+      "volume": 67154568,
       "url": "https://finviz.com/quote.ashx?t=SNXX"
     },
     {
@@ -980,7 +980,7 @@
       "pe": "-",
       "price": 10.38,
       "changePct": -2.35,
-      "volume": 67065741,
+      "volume": 67068442,
       "url": "https://finviz.com/quote.ashx?t=BITO"
     },
     {
@@ -993,7 +993,7 @@
       "pe": "-",
       "price": 2.39,
       "changePct": -17.3,
-      "volume": 65353353,
+      "volume": 65443213,
       "url": "https://finviz.com/quote.ashx?t=RZLV"
     },
     {
@@ -1006,7 +1006,7 @@
       "pe": "-",
       "price": 105.91,
       "changePct": -6.1,
-      "volume": 63870936,
+      "volume": 63954658,
       "url": "https://finviz.com/quote.ashx?t=SOXL"
     },
     {
@@ -1019,7 +1019,7 @@
       "pe": "29.93",
       "price": 18.14,
       "changePct": -2.84,
-      "volume": 63805431,
+      "volume": 63823601,
       "url": "https://finviz.com/quote.ashx?t=PATH"
     },
     {
@@ -1032,7 +1032,7 @@
       "pe": "-",
       "price": 12.95,
       "changePct": -3.57,
-      "volume": 63317909,
+      "volume": 63355057,
       "url": "https://finviz.com/quote.ashx?t=AAL"
     },
     {
@@ -1045,7 +1045,7 @@
       "pe": "68.58",
       "price": 9.93,
       "changePct": -2.07,
-      "volume": 61525133,
+      "volume": 61578632,
       "url": "https://finviz.com/quote.ashx?t=NOK"
     }
   ],
@@ -1060,7 +1060,7 @@
       "pe": "-",
       "price": 13.34,
       "changePct": -3.47,
-      "volume": 862176,
+      "volume": 862111,
       "url": "https://finviz.com/quote.ashx?t=ADUR"
     },
     {
@@ -1073,7 +1073,7 @@
       "pe": "35.56",
       "price": 404.75,
       "changePct": -4.76,
-      "volume": 503290,
+      "volume": 503477,
       "url": "https://finviz.com/quote.ashx?t=AGX"
     },
     {
@@ -1086,7 +1086,7 @@
       "pe": "-",
       "price": 10.34,
       "changePct": -4.44,
-      "volume": 4781291,
+      "volume": 4783881,
       "url": "https://finviz.com/quote.ashx?t=AI"
     },
     {
@@ -1099,7 +1099,7 @@
       "pe": "-",
       "price": 67.83,
       "changePct": -2.23,
-      "volume": 1250117,
+      "volume": 1251431,
       "url": "https://finviz.com/quote.ashx?t=AMBA"
     },
     {
@@ -1112,7 +1112,7 @@
       "pe": "-",
       "price": 0.88,
       "changePct": -24.13,
-      "volume": 16234389,
+      "volume": 16317498,
       "url": "https://finviz.com/quote.ashx?t=AMBR"
     },
     {
@@ -1125,7 +1125,7 @@
       "pe": "-",
       "price": 10,
       "changePct": -5.39,
-      "volume": 32187,
+      "volume": 32178,
       "url": "https://finviz.com/quote.ashx?t=AOUT"
     },
     {
@@ -1138,7 +1138,7 @@
       "pe": "-",
       "price": 9.83,
       "changePct": -4.19,
-      "volume": 5032612,
+      "volume": 5032862,
       "url": "https://finviz.com/quote.ashx?t=ASAN"
     },
     {
@@ -1151,7 +1151,7 @@
       "pe": "61.54",
       "price": 369.68,
       "changePct": -0.18,
-      "volume": 19266886,
+      "volume": 19288937,
       "url": "https://finviz.com/quote.ashx?t=AVGO"
     },
     {
@@ -1164,7 +1164,7 @@
       "pe": "63.27",
       "price": 9.01,
       "changePct": -0.22,
-      "volume": 104562,
+      "volume": 104554,
       "url": "https://finviz.com/quote.ashx?t=BBCP"
     },
     {
@@ -1177,7 +1177,7 @@
       "pe": "17.68",
       "price": 27.01,
       "changePct": -0.84,
-      "volume": 114203,
+      "volume": 114234,
       "url": "https://finviz.com/quote.ashx?t=BF-A"
     },
     {
@@ -1190,7 +1190,7 @@
       "pe": "17.25",
       "price": 26.36,
       "changePct": -0.79,
-      "volume": 3182169,
+      "volume": 3182481,
       "url": "https://finviz.com/quote.ashx?t=BF-B"
     },
     {
@@ -1203,7 +1203,7 @@
       "pe": "-",
       "price": 2.76,
       "changePct": -1.43,
-      "volume": 69271,
+      "volume": 69266,
       "url": "https://finviz.com/quote.ashx?t=BLRX"
     },
     {
@@ -1216,7 +1216,7 @@
       "pe": "-",
       "price": 2.09,
       "changePct": 0,
-      "volume": 34377,
+      "volume": 34370,
       "url": "https://finviz.com/quote.ashx?t=BMRA"
     },
     {
@@ -1242,7 +1242,7 @@
       "pe": "-",
       "price": 1.84,
       "changePct": -23.01,
-      "volume": 594741,
+      "volume": 595050,
       "url": "https://finviz.com/quote.ashx?t=CANG"
     },
     {
@@ -1255,7 +1255,7 @@
       "pe": "-",
       "price": 2.73,
       "changePct": -4.88,
-      "volume": 144640,
+      "volume": 144660,
       "url": "https://finviz.com/quote.ashx?t=CFND"
     },
     {
@@ -1268,7 +1268,7 @@
       "pe": "-",
       "price": 5.3,
       "changePct": -3.64,
-      "volume": 638676,
+      "volume": 638779,
       "url": "https://finviz.com/quote.ashx?t=CHPT"
     },
     {
@@ -1281,7 +1281,7 @@
       "pe": "119.94",
       "price": 360.33,
       "changePct": -5.87,
-      "volume": 2261268,
+      "volume": 2261401,
       "url": "https://finviz.com/quote.ashx?t=CIEN"
     },
     {
@@ -1294,7 +1294,7 @@
       "pe": "11.66",
       "price": 23.71,
       "changePct": 0.13,
-      "volume": 6515978,
+      "volume": 6519508,
       "url": "https://finviz.com/quote.ashx?t=CPB"
     },
     {
@@ -1307,7 +1307,7 @@
       "pe": "83.33",
       "price": 206.63,
       "changePct": -8.65,
-      "volume": 9464019,
+      "volume": 9513664,
       "url": "https://finviz.com/quote.ashx?t=CRDO"
     }
   ]
