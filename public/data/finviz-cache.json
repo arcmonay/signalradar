@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-03T02:11:50.700Z",
+  "asOf": "2026-09-03T05:16:49.565Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1116,6 +1116,19 @@
       "url": "https://finviz.com/quote.ashx?t=AMBR"
     },
     {
+      "symbol": "AMIX",
+      "company": "Autonomix Medical Inc",
+      "sector": "Healthcare",
+      "industry": "Medical Devices",
+      "country": "USA",
+      "marketCap": "4.37M",
+      "pe": "-",
+      "price": 4.5,
+      "changePct": -5.06,
+      "volume": 108456,
+      "url": "https://finviz.com/quote.ashx?t=AMIX"
+    },
+    {
       "symbol": "AOUT",
       "company": "American Outdoor Brands Inc",
       "sector": "Consumer Cyclical",
@@ -1140,6 +1153,19 @@
       "changePct": -0.31,
       "volume": 5116597,
       "url": "https://finviz.com/quote.ashx?t=ASAN"
+    },
+    {
+      "symbol": "ATTO",
+      "company": "Attovia Therapeutics Inc",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "country": "USA",
+      "marketCap": "1.05B",
+      "pe": "-",
+      "price": 23.13,
+      "changePct": 4.1,
+      "volume": 81462,
+      "url": "https://finviz.com/quote.ashx?t=ATTO"
     },
     {
       "symbol": "AVGO",
@@ -1174,7 +1200,7 @@
       "industry": "Beverages - Wineries & Distilleries",
       "country": "USA",
       "marketCap": "12.62B",
-      "pe": "18.27",
+      "pe": "18.00",
       "price": 27.92,
       "changePct": 3.37,
       "volume": 142674,
@@ -1187,7 +1213,7 @@
       "industry": "Beverages - Wineries & Distilleries",
       "country": "USA",
       "marketCap": "12.68B",
-      "pe": "17.92",
+      "pe": "17.65",
       "price": 27.38,
       "changePct": 3.87,
       "volume": 4039417,
@@ -1283,32 +1309,6 @@
       "changePct": -1.71,
       "volume": 2870726,
       "url": "https://finviz.com/quote.ashx?t=CIEN"
-    },
-    {
-      "symbol": "CPB",
-      "company": "Campbells Co",
-      "sector": "Consumer Defensive",
-      "industry": "Packaged Foods",
-      "country": "USA",
-      "marketCap": "7.09B",
-      "pe": "11.69",
-      "price": 23.78,
-      "changePct": 0.3,
-      "volume": 6883633,
-      "url": "https://finviz.com/quote.ashx?t=CPB"
-    },
-    {
-      "symbol": "CRDO",
-      "company": "Credo Technology Group Holding Ltd",
-      "sector": "Technology",
-      "industry": "Semiconductors",
-      "country": "Cayman Islands",
-      "marketCap": "31.05B",
-      "pe": "58.87",
-      "price": 165.22,
-      "changePct": -20.04,
-      "volume": 30111816,
-      "url": "https://finviz.com/quote.ashx?t=CRDO"
     }
   ]
 }
