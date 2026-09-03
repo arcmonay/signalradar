@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-03T06:41:42.197Z",
+  "asOf": "2026-09-03T07:08:51.028Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1070,7 +1070,7 @@
       "industry": "Engineering & Construction",
       "country": "USA",
       "marketCap": "5.75B",
-      "pe": "36.06",
+      "pe": "32.45",
       "price": 410.4,
       "changePct": 1.4,
       "volume": 556136,
@@ -1174,7 +1174,7 @@
       "industry": "Semiconductors",
       "country": "USA",
       "marketCap": "1747.17B",
-      "pe": "61.14",
+      "pe": "46.87",
       "price": 367.24,
       "changePct": -0.66,
       "volume": 38874578,
