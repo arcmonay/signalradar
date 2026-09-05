@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-05T16:37:39.821Z",
+  "asOf": "2026-09-05T18:45:55.802Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1116,6 +1116,19 @@
       "url": "https://finviz.com/quote.ashx?t=ALAR"
     },
     {
+      "symbol": "ALP",
+      "company": "Alpha Compute Corp",
+      "sector": "Financial",
+      "industry": "Asset Management",
+      "country": "United Kingdom",
+      "marketCap": "7.69M",
+      "pe": "-",
+      "price": 0.1,
+      "changePct": -13.74,
+      "volume": 9806029,
+      "url": "https://finviz.com/quote.ashx?t=ALP"
+    },
+    {
       "symbol": "AMBA",
       "company": "Ambarella Inc",
       "sector": "Technology",
@@ -1168,6 +1181,19 @@
       "url": "https://finviz.com/quote.ashx?t=AOUT"
     },
     {
+      "symbol": "APMD",
+      "company": "Apnimed Inc",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "country": "USA",
+      "marketCap": "1.14B",
+      "pe": "-",
+      "price": 27.45,
+      "changePct": -1.29,
+      "volume": 233022,
+      "url": "https://finviz.com/quote.ashx?t=APMD"
+    },
+    {
       "symbol": "ASAN",
       "company": "Asana Inc",
       "sector": "Technology",
@@ -1179,6 +1205,19 @@
       "changePct": -12.69,
       "volume": 17246369,
       "url": "https://finviz.com/quote.ashx?t=ASAN"
+    },
+    {
+      "symbol": "ATHR",
+      "company": "Aether Holdings Inc",
+      "sector": "Technology",
+      "industry": "Software - Application",
+      "country": "USA",
+      "marketCap": "37.20M",
+      "pe": "-",
+      "price": 3.04,
+      "changePct": -2.88,
+      "volume": 6526,
+      "url": "https://finviz.com/quote.ashx?t=ATHR"
     },
     {
       "symbol": "ATTO",
@@ -1220,6 +1259,19 @@
       "url": "https://finviz.com/quote.ashx?t=BBCP"
     },
     {
+      "symbol": "BBLG",
+      "company": "Bone Biologics Corp",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "country": "USA",
+      "marketCap": "1.57M",
+      "pe": "-",
+      "price": 0.57,
+      "changePct": 1.86,
+      "volume": 15190,
+      "url": "https://finviz.com/quote.ashx?t=BBLG"
+    },
+    {
       "symbol": "BDMD",
       "company": "Baird Medical Investment Holdings Limited",
       "sector": "Healthcare",
@@ -1257,58 +1309,6 @@
       "changePct": -2.84,
       "volume": 1991709,
       "url": "https://finviz.com/quote.ashx?t=BF-B"
-    },
-    {
-      "symbol": "BFRG",
-      "company": "Bullfrog AI Holdings Inc",
-      "sector": "Healthcare",
-      "industry": "Health Information Services",
-      "country": "USA",
-      "marketCap": "9.33M",
-      "pe": "-",
-      "price": 0.5,
-      "changePct": 2.69,
-      "volume": 56412,
-      "url": "https://finviz.com/quote.ashx?t=BFRG"
-    },
-    {
-      "symbol": "BLRX",
-      "company": "Bioline Rx Ltd ADR",
-      "sector": "Healthcare",
-      "industry": "Biotechnology",
-      "country": "Israel",
-      "marketCap": "11.67M",
-      "pe": "-",
-      "price": 2.67,
-      "changePct": -0.74,
-      "volume": 27937,
-      "url": "https://finviz.com/quote.ashx?t=BLRX"
-    },
-    {
-      "symbol": "BMRA",
-      "company": "Biomerica Inc",
-      "sector": "Healthcare",
-      "industry": "Medical Devices",
-      "country": "USA",
-      "marketCap": "10.60M",
-      "pe": "-",
-      "price": 2.31,
-      "changePct": 4.05,
-      "volume": 54603,
-      "url": "https://finviz.com/quote.ashx?t=BMRA"
-    },
-    {
-      "symbol": "BRAI",
-      "company": "Braiin Ltd",
-      "sector": "Technology",
-      "industry": "Computer Hardware",
-      "country": "Australia",
-      "marketCap": "1.16B",
-      "pe": "-",
-      "price": 5.63,
-      "changePct": 0.54,
-      "volume": 146947,
-      "url": "https://finviz.com/quote.ashx?t=BRAI"
     }
   ]
 }
