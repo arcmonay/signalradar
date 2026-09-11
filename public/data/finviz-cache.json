@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-11T00:48:11.435Z",
+  "asOf": "2026-09-11T05:35:08.031Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1226,7 +1226,7 @@
       "industry": "Apparel Retail",
       "country": "USA",
       "marketCap": "399.05M",
-      "pe": "7.90",
+      "pe": "7.88",
       "price": 11.88,
       "changePct": -2.22,
       "volume": 895821,
