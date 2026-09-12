@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-12T01:22:19.317Z",
+  "asOf": "2026-09-12T06:07:54.911Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1103,6 +1103,19 @@
       "url": "https://finviz.com/quote.ashx?t=AEO"
     },
     {
+      "symbol": "ANAB",
+      "company": "AnaptysBio Inc",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "country": "USA",
+      "marketCap": "1.60B",
+      "pe": "-",
+      "price": 53.87,
+      "changePct": -2.34,
+      "volume": 336187,
+      "url": "https://finviz.com/quote.ashx?t=ANAB"
+    },
+    {
       "symbol": "APMD",
       "company": "Apnimed Inc",
       "sector": "Healthcare",
@@ -1238,7 +1251,7 @@
       "sector": "Healthcare",
       "industry": "Biotechnology",
       "country": "USA",
-      "marketCap": "2.03B",
+      "marketCap": "2.40B",
       "pe": "-",
       "price": 26.64,
       "changePct": -2.24,
@@ -1296,19 +1309,6 @@
       "changePct": 7.87,
       "volume": 154994,
       "url": "https://finviz.com/quote.ashx?t=CANF"
-    },
-    {
-      "symbol": "CASY",
-      "company": "Casey's General Stores Inc",
-      "sector": "Consumer Cyclical",
-      "industry": "Specialty Retail",
-      "country": "USA",
-      "marketCap": "22.75B",
-      "pe": "29.63",
-      "price": 615.47,
-      "changePct": -1.94,
-      "volume": 624353,
-      "url": "https://finviz.com/quote.ashx?t=CASY"
     }
   ]
 }
