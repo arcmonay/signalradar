@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-13T02:55:36.476Z",
+  "asOf": "2026-09-13T07:59:04.220Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1200,7 +1200,7 @@
       "industry": "Farm & Heavy Construction Machinery",
       "country": "USA",
       "marketCap": "197.63M",
-      "pe": "-",
+      "pe": "2.63",
       "price": 4.8,
       "changePct": -3.81,
       "volume": 2372912,
