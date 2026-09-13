@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-12T23:41:14.863Z",
+  "asOf": "2026-09-13T02:55:36.476Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -488,8 +488,8 @@
     {
       "symbol": "SGRX",
       "company": "Sangrix Inc",
-      "sector": "Financial",
-      "industry": "Financial Data & Stock Exchanges",
+      "sector": "Technology",
+      "industry": "Information Technology Services",
       "country": "Singapore",
       "marketCap": "1.38M",
       "pe": "-",
