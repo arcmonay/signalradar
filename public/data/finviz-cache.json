@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-17T00:02:22.039Z",
+  "asOf": "2026-09-17T05:05:50.219Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -479,7 +479,7 @@
       "industry": "Luxury Goods",
       "country": "Germany",
       "marketCap": "1.21B",
-      "pe": "2.16",
+      "pe": "-",
       "price": 8.81,
       "changePct": 23.22,
       "volume": 2244546,
@@ -1095,7 +1095,7 @@
       "sector": "Healthcare",
       "industry": "Biotechnology",
       "country": "USA",
-      "marketCap": "379.22M",
+      "marketCap": "385.08M",
       "pe": "-",
       "price": 11.04,
       "changePct": -0.09,
@@ -1121,7 +1121,7 @@
       "sector": "Consumer Defensive",
       "industry": "Education & Training Services",
       "country": "Singapore",
-      "marketCap": "43.70M",
+      "marketCap": "43.49M",
       "pe": "-",
       "price": 10.21,
       "changePct": -10.52,
@@ -1304,7 +1304,7 @@
       "industry": "Luxury Goods",
       "country": "Germany",
       "marketCap": "1.21B",
-      "pe": "2.16",
+      "pe": "-",
       "price": 8.81,
       "changePct": 23.22,
       "volume": 2244546,
