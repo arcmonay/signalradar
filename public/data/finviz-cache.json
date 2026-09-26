@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-26T01:09:10.483Z",
+  "asOf": "2026-09-26T06:21:39.848Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -911,7 +911,7 @@
       "sector": "Technology",
       "industry": "Communication Equipment",
       "country": "USA",
-      "marketCap": "4.45B",
+      "marketCap": "4.43B",
       "pe": "85.46",
       "price": 7.64,
       "changePct": 0.53,
@@ -1135,7 +1135,7 @@
       "industry": "Restaurants",
       "country": "USA",
       "marketCap": "1.16B",
-      "pe": "37.14",
+      "pe": "37.16",
       "price": 51.81,
       "changePct": -0.06,
       "volume": 1168495,
