@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-03T09:37:44.148Z",
+  "asOf": "2026-10-03T14:32:06.406Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -575,7 +575,7 @@
       "pe": "20.37",
       "price": 1.85,
       "changePct": -35.31,
-      "volume": 8020060,
+      "volume": 8020061,
       "url": "https://finviz.com/quote.ashx?t=SAIQ"
     },
     {
@@ -607,8 +607,8 @@
     {
       "symbol": "RZAI",
       "company": "Roze AI Inc",
-      "sector": "Industrials",
-      "industry": "Security & Protection Services",
+      "sector": "Technology",
+      "industry": "Software - Infrastructure",
       "country": "South Korea",
       "marketCap": "1.11B",
       "pe": "-",
@@ -779,7 +779,7 @@
       "sector": "Basic Materials",
       "industry": "Building Materials",
       "country": "China",
-      "marketCap": "3.90M",
+      "marketCap": "13.70M",
       "pe": "-",
       "price": 1.55,
       "changePct": -16.93,
