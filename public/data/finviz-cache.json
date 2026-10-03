@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-03T18:30:37.481Z",
+  "asOf": "2026-10-03T21:57:16.853Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1207,6 +1207,19 @@
       "url": "https://finviz.com/quote.ashx?t=CNXC"
     },
     {
+      "symbol": "COPR",
+      "company": "Idaho Copper Corp",
+      "sector": "Basic Materials",
+      "industry": "Copper",
+      "country": "USA",
+      "marketCap": "60.09M",
+      "pe": "-",
+      "price": 3.2,
+      "changePct": 0.31,
+      "volume": 118034,
+      "url": "https://finviz.com/quote.ashx?t=COPR"
+    },
+    {
       "symbol": "FDS",
       "company": "Factset Research Systems Inc",
       "sector": "Financial",
@@ -1218,6 +1231,19 @@
       "changePct": -4.18,
       "volume": 566725,
       "url": "https://finviz.com/quote.ashx?t=FDS"
+    },
+    {
+      "symbol": "FEAM",
+      "company": "5E Advanced Materials Inc",
+      "sector": "Basic Materials",
+      "industry": "Specialty Chemicals",
+      "country": "USA",
+      "marketCap": "161.59M",
+      "pe": "-",
+      "price": 3.88,
+      "changePct": 20.12,
+      "volume": 2232495,
+      "url": "https://finviz.com/quote.ashx?t=FEAM"
     },
     {
       "symbol": "GNS",
@@ -1283,32 +1309,6 @@
       "changePct": 2.89,
       "volume": 4886118,
       "url": "https://finviz.com/quote.ashx?t=IVA"
-    },
-    {
-      "symbol": "JBL",
-      "company": "Jabil Inc",
-      "sector": "Technology",
-      "industry": "Electronic Components",
-      "country": "USA",
-      "marketCap": "31.90B",
-      "pe": "31.14",
-      "price": 304.41,
-      "changePct": 1.54,
-      "volume": 1379211,
-      "url": "https://finviz.com/quote.ashx?t=JBL"
-    },
-    {
-      "symbol": "JEF",
-      "company": "Jefferies Financial Group Inc",
-      "sector": "Financial",
-      "industry": "Capital Markets",
-      "country": "USA",
-      "marketCap": "10.60B",
-      "pe": "12.81",
-      "price": 45.97,
-      "changePct": 1.59,
-      "volume": 2087512,
-      "url": "https://finviz.com/quote.ashx?t=JEF"
     }
   ]
 }
