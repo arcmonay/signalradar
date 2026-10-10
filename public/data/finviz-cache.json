@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-10T17:37:02.429Z",
+  "asOf": "2026-10-10T21:05:19.765Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -659,8 +659,8 @@
     {
       "symbol": "NSTR",
       "company": "NorthStar Earth & Space Enterprises Inc",
-      "sector": "Financial",
-      "industry": "Shell Companies",
+      "sector": "Technology",
+      "industry": "Software - Infrastructure",
       "country": "Canada",
       "marketCap": "135.54M",
       "pe": "36.94",
@@ -724,8 +724,8 @@
     {
       "symbol": "AIOK",
       "company": "AI OKTO Corp",
-      "sector": "Industrials",
-      "industry": "Marine Shipping",
+      "sector": "Energy",
+      "industry": "Oil & Gas Refining & Marketing",
       "country": "USA",
       "marketCap": "-",
       "pe": "-",
@@ -1129,6 +1129,19 @@
       "url": "https://finviz.com/quote.ashx?t=CCEL"
     },
     {
+      "symbol": "CMCL",
+      "company": "Caledonia Mining Corp Plc",
+      "sector": "Basic Materials",
+      "industry": "Gold",
+      "country": "United Kingdom",
+      "marketCap": "459.21M",
+      "pe": "7.05",
+      "price": 23.75,
+      "changePct": -2.7,
+      "volume": 433889,
+      "url": "https://finviz.com/quote.ashx?t=CMCL"
+    },
+    {
       "symbol": "DAL",
       "company": "Delta Air Lines Inc",
       "sector": "Industrials",
@@ -1296,19 +1309,6 @@
       "changePct": 6.58,
       "volume": 5808926,
       "url": "https://finviz.com/quote.ashx?t=PENG"
-    },
-    {
-      "symbol": "PEP",
-      "company": "PepsiCo Inc",
-      "sector": "Consumer Defensive",
-      "industry": "Beverages - Non-Alcoholic",
-      "country": "USA",
-      "marketCap": "171.66B",
-      "pe": "15.83",
-      "price": 125.97,
-      "changePct": -1.85,
-      "volume": 9875661,
-      "url": "https://finviz.com/quote.ashx?t=PEP"
     }
   ]
 }
