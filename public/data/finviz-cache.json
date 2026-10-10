@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-10T00:11:34.820Z",
+  "asOf": "2026-10-10T06:10:46.340Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -702,7 +702,7 @@
       "industry": "Oil & Gas Midstream",
       "country": "Cyprus",
       "marketCap": "152.41M",
-      "pe": "404.59",
+      "pe": "-",
       "price": 4.41,
       "changePct": -19.53,
       "volume": 242606,
