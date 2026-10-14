@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-14T00:27:00.830Z",
+  "asOf": "2026-10-14T05:13:00.749Z",
   "source": "finviz-cache",
   "unusualVolume": [
     {
@@ -1161,7 +1161,7 @@
       "industry": "Banks - Diversified",
       "country": "USA",
       "marketCap": "208.89B",
-      "pe": "13.44",
+      "pe": "12.14",
       "price": 124.53,
       "changePct": -5.6,
       "volume": 20438398,
